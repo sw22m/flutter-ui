@@ -1,33 +1,37 @@
+// import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../config.dart' show apiHost;
 
-class Axis {
-  final int value;
+class Position {
+  final double x;
+  final double y;
+  final double z;
 
-  const Axis({
-    required this.value,
+  const Position({
+    required this.x,
+    required this.y,
+    required this.z,
   });
 
-  factory Axis.fromJson(Map<String, dynamic> json) {
-    return Axis(
-      value: json['data']['value'] as int,
+  factory Position.fromJson(Map<String, dynamic> json) {
+    return Position(
+      x: json['data']['x'] as double,
+      y: json['data']['y'] as double,
+      z: json['data']['z'] as double,
     );
   }
 }
 
-Future<Axis> fetchAxis() async {
+Future<Position> fetchPosition() async {
   final response = await http
-      .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
+      .get(Uri.parse('http://localhost:8080/get/pos'));
 
   if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    return Axis.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return Position.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load album');
+    throw Exception('Failed to fetch position');
   }
 }
 
@@ -44,53 +48,71 @@ class _AxisState extends State<AxisControl> {
   int value = 1;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Row(children: <Widget>[
-      Text(widget.axis, textAlign: TextAlign.center),
-      Expanded(
-          child: IconButton(
-              icon: const Icon(Icons.remove_circle_outline_rounded),
-              onPressed: () {
-                decrease();
-              })),
-      Expanded(child: Text('$value', textAlign: TextAlign.center)),
-      Expanded(
-          child: IconButton(
-              icon: const Icon(Icons.add_circle_outline_rounded),
-              onPressed: () {
-                increase();
-              })),
-    ]);
+    const Color myColor = Colors.white;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Spacer(flex: 2),
+        Text(widget.axis, textAlign: TextAlign.center, style: TextStyle(color: myColor)),
+        Expanded(
+            child: IconButton(
+                icon: const Icon(Icons.remove_circle_outline_rounded, color: myColor),
+                onPressed: () {
+                  decrease();
+                })),
+        Expanded(child: Text('$value', textAlign: TextAlign.center, style: TextStyle(color: myColor))),
+        Expanded(
+            child: IconButton(
+                icon: const Icon(Icons.add_circle_outline_rounded, color: myColor,),
+                onPressed: () {
+                  increase();
+                })),
+        Spacer(flex: 2),
+      ]
+    );
+  }
+
+  void setValue() {
+
   }
 
   void decrease() {
-    print(value);
     value--;
-
     setState(() {});
   }
 
   void increase() {
-    print(value);
     value++;
-    // print(root._controller)
     setState(() {});
   }
 }
 
-class AxesControlsWidget extends StatelessWidget {
-  const AxesControlsWidget({super.key});
+
+class _AxesControlsWidgetState extends State<AxesControlsWidget> {
+  int value = 1;
+  late Future<Position> position;
+
+  @override
+  void initState() {
+    super.initState();
+    position = fetchPosition();
+    print(position);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 200,
+        padding: EdgeInsets.fromLTRB(0, 16.0, 0, 0),
+        alignment: Alignment.topCenter,
         height: 200,
-        decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.red,
-            ),
-            borderRadius: BorderRadius.circular(20)),
+        // color: Colors.black,
         child: const Column(children: <Widget>[
           AxisControl(axis: 'x'),
           AxisControl(axis: 'y'),
@@ -98,3 +120,12 @@ class AxesControlsWidget extends StatelessWidget {
         ]));
   }
 }
+
+
+class AxesControlsWidget extends StatefulWidget {
+  const AxesControlsWidget({super.key});
+
+  @override
+  State<AxesControlsWidget> createState() => _AxesControlsWidgetState();
+}
+

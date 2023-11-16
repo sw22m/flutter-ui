@@ -12,6 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
   flutter_localizations:
     sdk: flutter
   http: ^1.1.0
@@ -32,3 +33,35 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+
+  fonts:
+      - family: FiraSans
+        fonts:
+          - asset: assets/fonts/FiraSans-Regular.ttf
+          - asset: assets/fonts/FiraSans-Medium.ttf
+          - asset: assets/fonts/FiraSans-MediumItalic.ttf
+          - asset: assets/fonts/FiraSans-SemiBold.ttf
+          - asset: assets/fonts/FiraSans-Bold.ttf
+          - asset: assets/fonts/FiraSans-Italic.ttf
+            # style: italic
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/images/logo.png"
+    # background_color: "#hexcode"
+    # theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/images/logo.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/images/logo.png"
+  linux:
+    generate: true
+    image_path: "assets/images/logo.png"

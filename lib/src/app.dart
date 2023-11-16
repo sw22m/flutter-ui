@@ -6,6 +6,7 @@ import 'sample_feature/sample_item_list_view.dart';
 import 'video_feed/video_feed_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
+import 'snapshot/snapshot_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -21,6 +22,14 @@ class MyApp extends StatelessWidget {
     // Glue the SettingsController to the MaterialApp.
     // The ListenableBuilder Widget listens to the SettingsController for changes.
     // Whenever the user updates their settings, the MaterialApp is rebuilt.
+    const AppBarTheme _appBarTheme = AppBarTheme(
+      toolbarHeight: 48,
+      color: Color.fromARGB(255, 11, 120, 50),
+      foregroundColor: Colors.white,
+    );
+
+    ThemeData _darkTheme = ThemeData.dark(); //(fontFamily: 'FiraSans');
+
     return ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -38,8 +47,8 @@ class MyApp extends StatelessWidget {
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
+          theme: ThemeData(fontFamily: 'FiraSans', appBarTheme: _appBarTheme),
+          darkTheme: _darkTheme,
           themeMode: settingsController.themeMode,
           onGenerateRoute: (RouteSettings routeSettings) {
             return MaterialPageRoute<void>(
@@ -54,6 +63,8 @@ class MyApp extends StatelessWidget {
                     return const SampleItemListView();
                   case VideoFeedView.routeName:
                     return const VideoFeedView();
+                  case SnapshotView.routeName:
+                    return const SnapshotView();
                   default:
                     return const VideoFeedView();
                 }

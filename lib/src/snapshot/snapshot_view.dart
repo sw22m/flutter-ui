@@ -1,16 +1,16 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'axes_controls_widget.dart';
+// import 'axes_controls_widget.dart';
 import '../sample_feature/sample_item_list_view.dart';
 import '../settings/settings_view.dart';
 import '../common_widgets/nav_drawer.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'dart:async';
 import 'dart:convert';
-import 'video_feed_controls.dart';
+// import 'video_feed_controls.dart';
 import '../common_widgets/horizontalsplitview.dart';
-import 'video_feed_sidebar.dart';
+// import 'video_feed_sidebar.dart';
 import '../../config.dart' show apiHost;
 
 
@@ -78,16 +78,16 @@ class _VideoFeedState extends State<VideoFeed> {
 
 
 // Displays detailed information about a SampleItem.
-class VideoFeedView extends StatelessWidget {
-  const VideoFeedView({super.key});
+class SnapshotView extends StatelessWidget {
+  const SnapshotView({super.key});
 
-  static const routeName = '/video_feed';
+  static const routeName = '/snapshot';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Video Feed'),
+        title: const Text('Snapshot'),
         actions: [
           // IconButton(
           //     icon: const Icon(Icons.camera_alt_outlined),
@@ -102,7 +102,7 @@ class VideoFeedView extends StatelessWidget {
         children: <Widget>[
           // Center(
           //     child: VideoFeed()),
-          HorizontalSplitView(left: VideoFeed(), right: VideoFeedSidebar(), ratio: 0.8),
+          HorizontalSplitView(left: VideoFeed(), right: Text('Snapshot Sidebar'), ratio: 0.8),
           // NavRailExample(),
         ],
       ),
