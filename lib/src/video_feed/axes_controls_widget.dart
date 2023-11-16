@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../config.dart' show apiHost;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Position {
   final double x;
@@ -26,7 +27,7 @@ class Position {
 
 Future<Position> fetchPosition() async {
   final response = await http
-      .get(Uri.parse('http://localhost:8080/get/pos'));
+      .get(Uri.parse(dotenv.get('API_HOST', fallback: "http://localhost:8080") + '/get/pos'));
 
   if (response.statusCode == 200) {
     return Position.fromJson(jsonDecode(response.body) as Map<String, dynamic>);

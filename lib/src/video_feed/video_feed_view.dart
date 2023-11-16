@@ -12,7 +12,7 @@ import 'video_feed_controls.dart';
 import '../common_widgets/horizontalsplitview.dart';
 import 'video_feed_sidebar.dart';
 import '../../config.dart' show apiHost;
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class VideoFeed extends StatefulWidget {
   const VideoFeed({
@@ -37,7 +37,7 @@ class _VideoFeedState extends State<VideoFeed> {
   }
 
   void initSocket() {
-    socket = IO.io(apiHost, <String, dynamic>{
+    socket = IO.io(dotenv.get('API_HOST', fallback: "http://localhost:8080"), <String, dynamic>{
     'autoConnect': false,
     'transports': ['websocket'],
   });
