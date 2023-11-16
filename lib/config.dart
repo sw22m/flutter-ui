@@ -1,8 +1,11 @@
 // config.dart
 String get apiHost {
   bool isProd = const bool.fromEnvironment('dart.vm.product');
+  // TODO
   if (isProd) {
-    return String.fromEnvironment("API_HOST", defaultValue: "http://localhost:8080");
+    const url = String.fromEnvironment("API_HOST", defaultValue: "http://localhost:8080");
+    return url;
   }
-  return String.fromEnvironment("API_HOST", defaultValue: "http://localhost:8080");
+  const url = String.fromEnvironment("API_HOST", defaultValue: "http://localhost:8080");
+  return url;
 }
