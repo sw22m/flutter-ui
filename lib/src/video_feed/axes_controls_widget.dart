@@ -20,13 +20,13 @@ class PositionProvider with ChangeNotifier {
       // String host = dotenv.get('API_HOST', fallback: "http://localhost:8080");
       String host = apiHost;
       String url = "$host/get/pos";
+      log.info(url);
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
         x = json['data']['x'] as double;
         y = json['data']['y'] as double;
         z = json['data']['z'] as double;
-        print(json);
       } else {
         log.info('Failed to fetch position');
       }
@@ -43,10 +43,18 @@ class PositionProvider with ChangeNotifier {
     // String host = dotenv.get('API_HOST', fallback: "http://localhost:8080");
     String host = apiHost;
     String url = "$host/set/pos?x=$dx&y=$dy&z=$dz&relative=1";
-    log.info('message');
-    print(url);
+    log.info(url);
     final response = await http
       .get(Uri.parse(url));
+    if (response.statusCode == 200) {
+        Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+        x = json['data']['x'] as double;
+        y = json['data']['y'] as double;
+        z = json['data']['z'] as double;
+      } else {
+        log.info('Failed to set or fetch position');
+      }
+    notifyListeners();
   }
 
   void decreaseAxis(String axis) {
@@ -62,7 +70,6 @@ class PositionProvider with ChangeNotifier {
         break;
       default:
     }
-    fetchPosition();
   }
 
   void increaseAxis(String axis) {
@@ -78,7 +85,6 @@ class PositionProvider with ChangeNotifier {
         break;
       default:
     }
-    fetchPosition();
   }
 }
 
