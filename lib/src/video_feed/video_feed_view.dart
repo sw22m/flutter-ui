@@ -39,7 +39,7 @@ class _VideoFeedState extends State<VideoFeed> {
 
   void initSocket() {
     String host = apiHost;
-    socket = IO.io("ws://localhost:8080", <String, dynamic>{
+    socket = IO.io(host, <String, dynamic>{
     'autoConnect': false,
     'transports': ['websocket'],
   });
