@@ -9,7 +9,7 @@ void main() async {
   // Flutter Widgets.
   final settingsController = SettingsController(SettingsService());
 
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env");
 
   // Load the user's preferred theme while the splash screen is displayed.
   // This prevents a sudden theme change when the app is first displayed.

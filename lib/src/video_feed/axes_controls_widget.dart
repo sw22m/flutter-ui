@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../config.dart' show apiHost;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
@@ -17,7 +17,8 @@ class PositionProvider with ChangeNotifier {
   double z = 0;
 
   Future fetchPosition() async {
-      String host = dotenv.get('API_HOST', fallback: "http://localhost:8080");
+      // String host = dotenv.get('API_HOST', fallback: "http://localhost:8080");
+      String host = apiHost;
       String url = "$host/get/pos";
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -33,13 +34,14 @@ class PositionProvider with ChangeNotifier {
       notifyListeners();
   }
 
-  Future setAbsolutePosition() async {
-    final response = await http
-      .get(Uri.parse(dotenv.get('API_HOST', fallback: "http://localhost:8080") + '/set/pos?x=2&relative=1'));
-  }
+  // Future setAbsolutePosition() async {
+  //   final response = await http
+  //     .get(Uri.parse(dotenv.get('API_HOST', fallback: "http://localhost:8080") + '/set/pos?x=2&relative=1'));
+  // }
 
   Future setPositionRelative(double dx, double dy, double dz) async {
-    String host = dotenv.get('API_HOST', fallback: "http://localhost:8080");
+    // String host = dotenv.get('API_HOST', fallback: "http://localhost:8080");
+    String host = apiHost;
     String url = "$host/set/pos?x=$dx&y=$dy&z=$dz&relative=1";
     log.info('message');
     print(url);

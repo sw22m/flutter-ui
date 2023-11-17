@@ -38,12 +38,13 @@ class _VideoFeedState extends State<VideoFeed> {
   }
 
   void initSocket() {
-    socket = IO.io(dotenv.get('API_HOST', fallback: "http://localhost:8080"), <String, dynamic>{
+    String host = apiHost;
+    socket = IO.io("ws://localhost:8080", <String, dynamic>{
     'autoConnect': false,
     'transports': ['websocket'],
   });
     socket.onConnect((_) {
-      socket.emit('video_feed');
+      // socket.emit('video_feed');
       // timer = Timer.periodic(new Duration(milliseconds: 1000), (timer) {
       //   onTimer(timer);
       // });
@@ -69,7 +70,7 @@ class _VideoFeedState extends State<VideoFeed> {
     socket.emit('video_feed');
   }
 
-  void onVideoFeedBack(data) {    
+  void onVideoFeedBack(data) {
     setState(() {
       // Remove the URI e.g. data:image/jpg;base64,...'
       imageBytes = base64.decode(data.split(',').last);
@@ -113,6 +114,4 @@ class VideoFeedView extends StatelessWidget {
   void takeSnapshot() {
     print(121212);
   }
-
-  
 }
