@@ -16,6 +16,7 @@ import '../../config.dart' show apiHost;
 
 
 class SnapshotImage extends StatelessWidget {
+
   const SnapshotImage({
     super.key
   });
@@ -27,6 +28,12 @@ class SnapshotImage extends StatelessWidget {
 }
 
 
+Image _createSnapshotImage() {
+  Uint8List imageBytes = Uint8List(0);
+  Image image = Image(image: AssetImage('assets/images/error.png'));
+  return image;
+}
+  
 
 // Displays detailed information about a SampleItem.
 class SnapshotView extends StatelessWidget {
@@ -53,7 +60,7 @@ class SnapshotView extends StatelessWidget {
         children: <Widget>[
           // Center(
           //     child: VideoFeed()),
-          HorizontalSplitView(left: SnapshotImage(), right: Text('Snapshot Sidebar'), ratio: 0.8),
+          HorizontalSplitView(left: _createSnapshotImage(), right: Text('Snapshot Sidebar'), ratio: 0.8),
           // NavRailExample(),
         ],
       ),
