@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'axes_controls_widget.dart';
-
+import 'package:provider/provider.dart';
 
 class VideoFeedSidebar extends StatelessWidget {
   const VideoFeedSidebar({super.key});

@@ -1,14 +1,47 @@
+/*
+
+*/
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import '../video_feed/video_feed_view.dart';
 import '../snapshot/snapshot_view.dart';
+import 'package:provider/provider.dart';
 
-class _DrawerTop extends StatelessWidget {
+ListTile _createDrawerItem(BuildContext context, String text, IconData icon, String routeName, bool selected) {
+  return ListTile(
+      title: Text(text),
+      hoverColor: Colors.green,
+      selectedColor: selected ? Colors.white: Colors.black,
+      textColor: selected ? Colors.white: Colors.black,
+      iconColor: selected ? Colors.white: Colors.black,
+      tileColor: selected ? Colors.green: Colors.white70,
+      leading: Icon(icon),
+      onTap: () {
+        Navigator.pushNamed(context, routeName);
+        // setState(() {
+        //   index = 0;
+        // });
+      },
+    );}
+
+
+class _DrawerTop extends StatefulWidget {
+
   const _DrawerTop({super.key});
+
+  @override
+  State<_DrawerTop> createState() => _DrawerTopState();
+
+}
+
+class _DrawerTopState extends State<_DrawerTop> {
+
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      // backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       child: ListView(
         // Remove any padding from the ListView.
         padding: EdgeInsets.zero,
@@ -18,26 +51,9 @@ class _DrawerTop extends StatelessWidget {
             child: Image(image: AssetImage('assets/images/logo.png')
             ),
           ),
-          ListTile(
-            title: const Text('Video Feed'),
-            leading: const Icon(Icons.mic_external_on),
-            onTap: () {
-              Navigator.pushNamed(context, VideoFeedView.routeName);
-            },
-          ),
-          ListTile(
-              title: const Text('Snapshot'),
-              leading: const Icon(Icons.camera_alt),
-              onTap: () {
-                Navigator.pushNamed(context, SnapshotView.routeName);
-              }),
-          ListTile(
-            title: const Text('Settings'),
-            leading: const Icon(Icons.settings_applications),
-            onTap: () {
-              Navigator.restorablePushNamed(context, SettingsView.routeName);
-            },
-          ),
+          _createDrawerItem(context, 'Video Feed', Icons.mic_external_on, VideoFeedView.routeName, _selectedIndex == 0),
+          _createDrawerItem(context, 'Snapshot', Icons.camera_alt, SnapshotView.routeName, _selectedIndex == 1),
+          _createDrawerItem(context, 'Settings', Icons.settings_applications, SettingsView.routeName, _selectedIndex == 2)
         ],
       ),
     );

@@ -13,6 +13,7 @@ import '../common_widgets/horizontalsplitview.dart';
 import 'video_feed_sidebar.dart';
 import '../../config.dart' show apiHost;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
 class VideoFeed extends StatefulWidget {
   const VideoFeed({
@@ -42,12 +43,14 @@ class _VideoFeedState extends State<VideoFeed> {
     'transports': ['websocket'],
   });
     socket.onConnect((_) {
-      timer = Timer.periodic(new Duration(seconds: 1), (timer) {
-        onTimer(timer);
-      });
+      socket.emit('video_feed');
+      // timer = Timer.periodic(new Duration(milliseconds: 1000), (timer) {
+      //   onTimer(timer);
+      // });
     });
     socket.on('video_feed_back', (data) => onVideoFeedBack(data));
     socket.connect();
+    // socket.disconnect();
   }
 
   @override
@@ -70,9 +73,8 @@ class _VideoFeedState extends State<VideoFeed> {
     setState(() {
       // Remove the URI e.g. data:image/jpg;base64,...'
       imageBytes = base64.decode(data.split(',').last);
-      image = Image.memory(imageBytes);
+      image = Image.memory(imageBytes, gaplessPlayback: true);
     });
- 
   }
 }
 
@@ -85,30 +87,23 @@ class VideoFeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Video Feed'),
-        actions: [
-          // IconButton(
-          //     icon: const Icon(Icons.camera_alt_outlined),
-          //     onPressed: () {
-          //       Navigator.restorablePushNamed(
-          //           context, SampleItemListView.routeName);
-          //       takeSnapshot();
-          //     }),
-        ],
-      ),
-      body: Stack(
-        children: <Widget>[
-          // Center(
-          //     child: VideoFeed()),
-          HorizontalSplitView(left: VideoFeed(), right: VideoFeedSidebar(), ratio: 0.8),
-          // NavRailExample(),
-        ],
-      ),
-      backgroundColor: Color.fromARGB(255, 59, 59, 59),
-      drawer: NavDrawer(),
-    );
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PositionProvider()),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Video Feed'),
+        ),
+        body: Stack(
+          children: <Widget>[
+            HorizontalSplitView(left: VideoFeed(), right: VideoFeedSidebar(), ratio: 0.8),
+            // NavRailExample(),
+          ],
+        ),
+        backgroundColor: Color.fromARGB(255, 59, 59, 59),
+        drawer: NavDrawer(),
+      ));
   }
 
   void test() {

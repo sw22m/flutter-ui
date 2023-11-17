@@ -24,8 +24,16 @@ class MyApp extends StatelessWidget {
     // Whenever the user updates their settings, the MaterialApp is rebuilt.
     const AppBarTheme _appBarTheme = AppBarTheme(
       toolbarHeight: 48,
-      color: Color.fromARGB(255, 11, 120, 50),
-      foregroundColor: Colors.white,
+      shadowColor: Colors.black,
+      // color: Color.fromARGB(255, 11, 120, 50),
+      color: Color.fromARGB(255, 247, 247, 247),
+      // color: Color.fromARGB(255, 78, 203, 74),
+      // color: Color.fromARGB(255, 37, 38, 105), # TEV
+      // Note - testing font props
+      titleTextStyle: TextStyle(fontFamily: 'NotoSans', color: Colors.black, fontWeight: FontWeight.w600),
+      // surfaceTintColor: Colors.amber,
+      centerTitle: false,
+      foregroundColor: Color.fromARGB(255, 0, 0, 3),
     );
 
     ThemeData _darkTheme = ThemeData.dark(); //(fontFamily: 'FiraSans');
@@ -47,7 +55,7 @@ class MyApp extends StatelessWidget {
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-          theme: ThemeData(fontFamily: 'FiraSans', appBarTheme: _appBarTheme),
+          theme: ThemeData(fontFamily: 'NotoSans', appBarTheme: _appBarTheme),
           darkTheme: _darkTheme,
           themeMode: settingsController.themeMode,
           onGenerateRoute: (RouteSettings routeSettings) {
