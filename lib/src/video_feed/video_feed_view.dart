@@ -96,6 +96,15 @@ class VideoFeedView extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Video Feed'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.camera_alt),
+              tooltip: 'Show Snackbar',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Snapshot captured')));
+              },
+            )],
         ),
         body: Stack(
           children: <Widget>[

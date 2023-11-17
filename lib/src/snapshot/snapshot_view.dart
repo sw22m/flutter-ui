@@ -14,67 +14,18 @@ import '../common_widgets/horizontalsplitview.dart';
 import '../../config.dart' show apiHost;
 
 
-class VideoFeed extends StatefulWidget {
-  const VideoFeed({
+
+class SnapshotImage extends StatelessWidget {
+  const SnapshotImage({
     super.key
   });
 
   @override
-  State<VideoFeed> createState() => _VideoFeedState();
-}
-
-class _VideoFeedState extends State<VideoFeed> {
-  final TextEditingController _controller = TextEditingController();
-  late IO.Socket socket;
-  late Timer timer;
-  Uint8List imageBytes = Uint8List(0);
-  // Image image = Image.network("https://docs.flutter.dev/assets/images/dash/dash-fainting.gif");
-  Image image = Image(image: AssetImage('assets/images/error.png'));
-  @override
-  void initState() {
-    initSocket();
-    super.initState();
-  }
-
-  void initSocket() {
-    socket = IO.io(apiHost, <String, dynamic>{
-    'autoConnect': false,
-    'transports': ['websocket'],
-  });
-    socket.onConnect((_) {
-      timer = Timer.periodic(new Duration(seconds: 1), (timer) {
-        onTimer(timer);
-      });
-    });
-    socket.on('video_feed_back', (data) => onVideoFeedBack(data));
-    socket.connect();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return image;
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void onTimer(timer) {
-    // Request new image
-    socket.emit('video_feed');
-  }
-
-  void onVideoFeedBack(data) {    
-    setState(() {
-      // Remove the URI e.g. data:image/jpg;base64,...'
-      imageBytes = base64.decode(data.split(',').last);
-      image = Image.memory(imageBytes);
-    });
- 
+    return Text('snapshot placeholder');
   }
 }
+
 
 
 // Displays detailed information about a SampleItem.
@@ -102,7 +53,7 @@ class SnapshotView extends StatelessWidget {
         children: <Widget>[
           // Center(
           //     child: VideoFeed()),
-          HorizontalSplitView(left: VideoFeed(), right: Text('Snapshot Sidebar'), ratio: 0.8),
+          HorizontalSplitView(left: SnapshotImage(), right: Text('Snapshot Sidebar'), ratio: 0.8),
           // NavRailExample(),
         ],
       ),
