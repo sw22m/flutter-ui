@@ -38,13 +38,14 @@ class _VideoFeedState extends State<VideoFeed> {
   }
 
   void initSocket() {
-    String host = apiHost;
+    // String host = apiHost;
+    String host = "http://localhost:8080";
     socket = IO.io(host, <String, dynamic>{
     'autoConnect': false,
     'transports': ['websocket'],
   });
     socket.onConnect((_) {
-      // socket.emit('video_feed');
+      socket.emit('video_feed');
       // timer = Timer.periodic(new Duration(milliseconds: 1000), (timer) {
       //   onTimer(timer);
       // });
