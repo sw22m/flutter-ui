@@ -38,22 +38,22 @@ flutter:
     - assets/images/
     # - .env
 
-  fonts:
-      - family: FiraSans
-        fonts:
-          - asset: assets/fonts/FiraSans-Regular.ttf
-          - asset: assets/fonts/FiraSans-Medium.ttf
-          - asset: assets/fonts/FiraSans-MediumItalic.ttf
-          - asset: assets/fonts/FiraSans-SemiBold.ttf
-          - asset: assets/fonts/FiraSans-Bold.ttf
-          - asset: assets/fonts/FiraSans-Italic.ttf
-      - family: NotoSans
-        fonts:
-          - asset: assets/fonts/NotoSans-Regular.ttf
-          - asset: assets/fonts/NotoSans-Medium.ttf
-          - asset: assets/fonts/NotoSans-SemiBold.ttf
-          - asset: assets/fonts/NotoSans-Bold.ttf
-          - asset: assets/fonts/NotoSans-Italic.ttf
+  # fonts:
+  #     - family: FiraSans
+  #       fonts:
+  #         - asset: assets/fonts/FiraSans-Regular.ttf
+  #         - asset: assets/fonts/FiraSans-Medium.ttf
+  #         - asset: assets/fonts/FiraSans-MediumItalic.ttf
+  #         - asset: assets/fonts/FiraSans-SemiBold.ttf
+  #         - asset: assets/fonts/FiraSans-Bold.ttf
+  #         - asset: assets/fonts/FiraSans-Italic.ttf
+  #     - family: NotoSans
+  #       fonts:
+  #         - asset: assets/fonts/NotoSans-Regular.ttf
+  #         - asset: assets/fonts/NotoSans-Medium.ttf
+  #         - asset: assets/fonts/NotoSans-SemiBold.ttf
+  #         - asset: assets/fonts/NotoSans-Bold.ttf
+  #         - asset: assets/fonts/NotoSans-Italic.ttf
 
 flutter_launcher_icons:
   android: "launcher_icon"

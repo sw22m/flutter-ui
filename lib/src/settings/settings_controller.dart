@@ -5,10 +5,8 @@ class SettingsController with ChangeNotifier {
   SettingsController(this._settingsService);
 
   final SettingsService _settingsService;
-
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
-
   late String _baseURL;
   String get baseURL => _baseURL;
 
@@ -18,7 +16,6 @@ class SettingsController with ChangeNotifier {
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
     _baseURL = await _settingsService.baseURL();
-    // Important! Inform listeners a change has occurred.
     notifyListeners();
   }
 
@@ -33,7 +30,6 @@ class SettingsController with ChangeNotifier {
   /// Update and persist the ThemeMode based on the user's selection.
   Future<void> updateBaseURL(String? newBaseURL) async {
     if (newBaseURL == null) return;
-    if (newBaseURL == _themeMode) return;
     _baseURL = newBaseURL;
     notifyListeners();
     await _settingsService.updateBaseURL(newBaseURL);

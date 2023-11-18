@@ -1,13 +1,11 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../config.dart' show apiHost;
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
+import 'dart:async';
 
-import 'dart:convert';
 final log = Logger('AxesControl');
 
 class PositionProvider with ChangeNotifier {
@@ -16,21 +14,26 @@ class PositionProvider with ChangeNotifier {
   double y = 0;
   double z = 0;
 
+  PositionProvider() {
+    fetchPosition();
+  }
+
   Future fetchPosition() async {
-      // String host = dotenv.get('API_HOST', fallback: "http://localhost:8080");
-      String host = apiHost;
-      String url = "$host/get/pos";
+      String url = "$apiHost/get/pos";
       log.info(url);
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
-        x = json['data']['x'] as double;
-        y = json['data']['y'] as double;
-        z = json['data']['z'] as double;
-      } else {
-        log.info('Failed to fetch position');
+      try {
+        final response = await http.get(Uri.parse(url));
+        if (response.statusCode == 200) {
+          Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+          x = json['data']['x'] as double;
+          y = json['data']['y'] as double;
+          z = json['data']['z'] as double;
+        } else {
+          log.info('Failed to fetch position');
+        }
+      } on Exception {
+        log.info('Failed to fetch position');    
       }
-      
       notifyListeners();
   }
 
@@ -40,20 +43,22 @@ class PositionProvider with ChangeNotifier {
   // }
 
   Future setPositionRelative(double dx, double dy, double dz) async {
-    // String host = dotenv.get('API_HOST', fallback: "http://localhost:8080");
-    String host = apiHost;
-    String url = "$host/set/pos?x=$dx&y=$dy&z=$dz&relative=1";
+    String url = "$apiHost/set/pos?x=$dx&y=$dy&z=$dz&relative=1";
     log.info(url);
-    final response = await http
-      .get(Uri.parse(url));
-    if (response.statusCode == 200) {
-        Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
-        x = json['data']['x'] as double;
-        y = json['data']['y'] as double;
-        z = json['data']['z'] as double;
-      } else {
-        log.info('Failed to set or fetch position');
-      }
+    try {
+      final response = await http
+        .get(Uri.parse(url));
+      if (response.statusCode == 200) {
+          Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+          x = json['data']['x'] as double;
+          y = json['data']['y'] as double;
+          z = json['data']['z'] as double;
+        } else {
+          log.info('Failed to set position');
+        }
+    } on Exception {
+        log.info('Failed to set position');    
+    }  
     notifyListeners();
   }
 
@@ -88,42 +93,73 @@ class PositionProvider with ChangeNotifier {
   }
 }
 
+class AxisButton extends StatefulWidget {
+
+  final IconData iconData;
+  final String label;
+  final callback;
+
+  const AxisButton({super.key, required this.iconData, 
+    required this.label, required this.callback});
+
+  @override
+  State<AxisButton> createState() => _AxisButtonState();
+}
+
+class _AxisButtonState extends State<AxisButton> {
+
+  bool pressed = false;
+  Color myColor = Colors.lightGreen;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onLongPress: () {
+          pressed = true;
+          Timer timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+            if (pressed == false) {
+              timer.cancel();
+            }
+            widget.callback(widget.label);
+          });
+        },   
+        onLongPressUp: () {
+          pressed = false;
+        },
+        child: IconButton(
+            icon: Icon(widget.iconData, color: myColor),
+            onPressed: () {
+              widget.callback(widget.label);
+            })
+      );
+  }
+}
+
 Widget _createAxisControl(String label, double value, state) {
   const Color myColor = Colors.green;
   return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(label, textAlign: TextAlign.center, style: TextStyle(color: myColor)),
-        Expanded(
-            child: IconButton(
-                icon: const Icon(Icons.remove_circle_outline_rounded, color: myColor),
-                onPressed: () {
-                  state.decreaseAxis(label);
-                })),
-        Expanded(child: Text('$value', textAlign: TextAlign.center, style: TextStyle(color: myColor))),
-        Expanded(
-            child: IconButton(
-                icon: const Icon(Icons.add_circle_outline_rounded, color: myColor,),
-                onPressed: () {
-                  state.increaseAxis(label);
-                })),
-        // Spacer(flex: 1),
+        Text(label, textAlign: TextAlign.center, style: const TextStyle(color: myColor)),
+        Expanded(child: AxisButton(iconData: Icons.remove_circle_outline, 
+              label: label, callback: state.decreaseAxis)),
+        Expanded(child: Text('$value', textAlign: TextAlign.center, style: const TextStyle(color: myColor))),
+        Expanded(child: AxisButton(iconData: Icons.add_circle_outline, 
+              label: label, callback: state.increaseAxis)),
       ]
     ); 
 }
 
 
 class AxesControlsWidget extends StatelessWidget {
-
   const AxesControlsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
     final positionState = Provider.of<PositionProvider>(context);
     return Container(
-        padding: EdgeInsets.fromLTRB(24.0, 16.0, 0, 0),
+        padding: const EdgeInsets.fromLTRB(24.0, 16.0, 0, 0),
         height: 200,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

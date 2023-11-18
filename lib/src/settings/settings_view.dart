@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'settings_controller.dart';
 
 class ServerSettings extends StatelessWidget {
+  const ServerSettings({super.key});
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -44,10 +46,10 @@ class SettingsView extends StatelessWidget {
                   )
                 ],
               ),
-              TextFormField(
-                initialValue: controller.baseURL,
-                onChanged: controller.updateBaseURL,
-              ),
+              // TextFormField(
+              //   initialValue: controller.baseURL,
+              //   onChanged: controller.updateBaseURL,
+              // ),
             ],
           )),
     );

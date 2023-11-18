@@ -1,41 +1,97 @@
-import 'dart:typed_data';
-
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-// import 'axes_controls_widget.dart';
-import '../sample_feature/sample_item_list_view.dart';
-import '../settings/settings_view.dart';
+import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
 import '../common_widgets/nav_drawer.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'dart:async';
-import 'dart:convert';
-// import 'video_feed_controls.dart';
 import '../common_widgets/horizontalsplitview.dart';
-// import 'video_feed_sidebar.dart';
-import '../../config.dart' show apiHost;
+import 'package:provider/provider.dart';
+import '../video_feed/video_feed_provider.dart';
 
 
+class SnapshotThumbnail extends StatefulWidget {
 
-class SnapshotImage extends StatelessWidget {
+  final String name;
+  final Image image;
+  final int index;
+  final state;
+  
+  const SnapshotThumbnail(this.name, this.image, this.index, this.state);
 
-  const SnapshotImage({
-    super.key
-  });
+  @override
+  _SnapshotThumbnailState createState() => _SnapshotThumbnailState();
+
+}
+
+class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
+  Color color = Colors.transparent;
 
   @override
   Widget build(BuildContext context) {
-    return Text('snapshot placeholder');
+    return GestureDetector(
+        onTapDown: (TapDownDetails details) {
+          setState(() {
+            color = Colors.black.withOpacity(0.2);
+          });
+        },
+        onTapUp: (TapUpDetails details) {
+          widget.state.selectedSnapshot = widget.index;
+          setState(() {
+            color = Colors.transparent;
+          });
+        },
+        onTapCancel: () {
+          setState(() {
+            color = Colors.transparent;
+          });
+        },
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            widget.image,
+            Text(
+                  "(${widget.index}) ${widget.name}",
+                  style: const TextStyle(
+                      color: Colors.white,
+                      backgroundColor: Colors.black,
+                      fontStyle: FontStyle.italic
+                  ),
+            ),
+            AnimatedContainer(
+                color: color,
+                duration: const Duration(milliseconds: 50),
+            )
+          ],
+        )
+    );
   }
 }
 
 
-Image _createSnapshotImage() {
-  Uint8List imageBytes = Uint8List(0);
-  Image image = Image(image: AssetImage('assets/images/error.png'));
-  return image;
+GridView _createPhotoGrid(List<SnapshotThumbnail> snapshots) {
+  return GridView(
+    scrollDirection: Axis.vertical,           //default
+    reverse: false,                           //default
+    controller: ScrollController(),
+    primary: false,
+    shrinkWrap: true,
+    padding: const EdgeInsets.all(5.0),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      mainAxisSpacing: 5.0,
+      crossAxisSpacing: 5.0,
+    ),
+    addAutomaticKeepAlives: true,             //default
+    addRepaintBoundaries: true,               //default
+    addSemanticIndexes: true,                 //default
+    semanticChildCount: 0,
+    cacheExtent: 0.0,
+    dragStartBehavior: DragStartBehavior.start,
+    clipBehavior: Clip.hardEdge,
+    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,      
+    children: snapshots
+  );
 }
-  
 
-// Displays detailed information about a SampleItem.
+
 class SnapshotView extends StatelessWidget {
   const SnapshotView({super.key});
 
@@ -43,39 +99,59 @@ class SnapshotView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final snapshotState = Provider.of<SnapshotProvider>(context);
+    final videoFeedState = Provider.of<VideoFeedProvider>(context);
+    List<SnapshotThumbnail> snapshots = [];
+    int n = 0;
+    for (var data in snapshotState.snapshotList) {
+      snapshots.add(SnapshotThumbnail(data.name, data.image, n++, snapshotState));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Snapshot'),
         actions: [
-          // IconButton(
-          //     icon: const Icon(Icons.camera_alt_outlined),
-          //     onPressed: () {
-          //       Navigator.restorablePushNamed(
-          //           context, SampleItemListView.routeName);
-          //       takeSnapshot();
-          //     }),
+          IconButton(
+              icon: const Icon(Icons.delete_forever),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Snapshots cleared')));
+                snapshotState.clearSnapshots();
+              }),
+          IconButton(
+              icon: const Icon(Icons.camera_alt),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Snapshot captured')));
+                snapshotState.takeSnapshot(videoFeedState.image);
+              }),
         ],
       ),
       body: Stack(
         children: <Widget>[
-          // Center(
-          //     child: VideoFeed()),
-          HorizontalSplitView(left: _createSnapshotImage(), right: Text('Snapshot Sidebar'), ratio: 0.8),
+          Container(alignment: Alignment.topLeft,
+            height: 30,
+            child: snapshotState.selectedSnapshot != -1 ? 
+              Text(snapshots[snapshotState.selectedSnapshot].name, 
+              style: const TextStyle(color: Colors.white, backgroundColor: Colors.black))
+              : const Center()),
+          HorizontalSplitView(
+            left: snapshotState.selectedSnapshot != -1 ? 
+              snapshots[snapshotState.selectedSnapshot].image 
+              : const Center(child: Text('No Snapshot Selected')), 
+            right: Container(alignment: Alignment.topCenter, 
+              child: Column(children: [
+                videoFeedState.image,
+                _createPhotoGrid(snapshots)
+              ])
+            ), 
+            ratio: 0.8),
           // NavRailExample(),
         ],
       ),
-      backgroundColor: Color.fromARGB(255, 59, 59, 59),
-      drawer: NavDrawer(),
+      backgroundColor: const Color.fromARGB(255, 59, 59, 59),
+      drawer: const NavDrawer(),
     );
   }
-
-  void test() {
-    print(121212);
-  }
-
-  void takeSnapshot() {
-    print(121212);
-  }
-
   
 }

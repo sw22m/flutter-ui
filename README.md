@@ -7,6 +7,3 @@ In project root:
 flutter clean
 flutter pub get
 flutter run
-
-# ignore this - https://stackoverflow.com/a/62308032
-pip install gevent, then uninstall???

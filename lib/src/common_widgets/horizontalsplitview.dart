@@ -7,9 +7,7 @@ class HorizontalSplitView extends StatefulWidget {
 
   const HorizontalSplitView(
       {super.key, required this.left, required this.right, this.ratio = 0.5})
-      : assert(left != null),
-        assert(right != null),
-        assert(ratio >= 0),
+      : assert(ratio >= 0),
         assert(ratio <= 1);
 
   @override
@@ -55,7 +53,7 @@ class _HorizontalSplitViewState extends State<HorizontalSplitView> {
               child: SizedBox(
                 width: _dividerWidth,
                 height: constraints.maxHeight,
-                child: RotationTransition(
+                child: const RotationTransition(
                   child: Icon(Icons.drag_handle),
                   turns: AlwaysStoppedAnimation(0.25),
                 ),

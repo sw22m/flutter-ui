@@ -7,6 +7,9 @@ import 'video_feed/video_feed_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 import 'snapshot/snapshot_view.dart';
+import 'snapshot/snapshot_provider.dart';
+import 'package:provider/provider.dart';
+import 'video_feed/video_feed_provider.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -19,10 +22,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Glue the SettingsController to the MaterialApp.
-    // The ListenableBuilder Widget listens to the SettingsController for changes.
-    // Whenever the user updates their settings, the MaterialApp is rebuilt.
-    const AppBarTheme _appBarTheme = AppBarTheme(
+    const AppBarTheme appBarTheme = AppBarTheme(
       toolbarHeight: 48,
       shadowColor: Colors.black,
       // color: Color.fromARGB(255, 11, 120, 50),
@@ -30,18 +30,21 @@ class MyApp extends StatelessWidget {
       // color: Color.fromARGB(255, 78, 203, 74),
       // color: Color.fromARGB(255, 37, 38, 105), # TEV
       // Note - testing font props
-      titleTextStyle: TextStyle(fontFamily: 'NotoSans', color: Colors.black, fontWeight: FontWeight.w600),
-      // surfaceTintColor: Colors.amber,
+      // titleTextStyle: TextStyle(fontFamily: 'NotoSans', color: Colors.black, fontWeight: FontWeight.w600),
       centerTitle: false,
       foregroundColor: Color.fromARGB(255, 0, 0, 3),
     );
 
-    ThemeData _darkTheme = ThemeData.dark(); //(fontFamily: 'FiraSans');
-
+    ThemeData darkTheme = ThemeData.dark(); //(fontFamily: 'FiraSans');
     return ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
-        return MaterialApp(
+        return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => VideoFeedProvider()),
+        ChangeNotifierProvider(create: (_) => SnapshotProvider()),
+      ],
+      child: MaterialApp(
           debugShowCheckedModeBanner: false,
           restorationScopeId: 'app',
           localizationsDelegates: const [
@@ -55,8 +58,9 @@ class MyApp extends StatelessWidget {
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-          theme: ThemeData(fontFamily: 'NotoSans', appBarTheme: _appBarTheme),
-          darkTheme: _darkTheme,
+          // theme: ThemeData(fontFamily: 'NotoSans', appBarTheme: appBarTheme),
+          theme: ThemeData(appBarTheme: appBarTheme),
+          darkTheme: darkTheme,
           themeMode: settingsController.themeMode,
           onGenerateRoute: (RouteSettings routeSettings) {
             return MaterialPageRoute<void>(
@@ -79,7 +83,7 @@ class MyApp extends StatelessWidget {
               },
             );
           },
-        );
+        ));
       },
     );
   }

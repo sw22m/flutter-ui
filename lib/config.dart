@@ -1,5 +1,4 @@
 // config.dart
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 String get apiHost {
   bool isProd = const bool.fromEnvironment('dart.vm.product');

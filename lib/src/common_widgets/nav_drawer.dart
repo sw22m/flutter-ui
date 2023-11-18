@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import '../video_feed/video_feed_view.dart';
 import '../snapshot/snapshot_view.dart';
-import 'package:provider/provider.dart';
 
 ListTile _createDrawerItem(BuildContext context, String text, IconData icon, String routeName, bool selected) {
   return ListTile(
@@ -27,7 +26,7 @@ ListTile _createDrawerItem(BuildContext context, String text, IconData icon, Str
 
 class _DrawerTop extends StatefulWidget {
 
-  const _DrawerTop({super.key});
+  const _DrawerTop();
 
   @override
   State<_DrawerTop> createState() => _DrawerTopState();
@@ -36,7 +35,7 @@ class _DrawerTop extends StatefulWidget {
 
 class _DrawerTopState extends State<_DrawerTop> {
 
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {

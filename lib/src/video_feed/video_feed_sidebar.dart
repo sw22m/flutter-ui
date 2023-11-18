@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'axes_controls_widget.dart';
-import 'package:provider/provider.dart';
 
 class VideoFeedSidebar extends StatelessWidget {
   const VideoFeedSidebar({super.key});
@@ -8,8 +7,8 @@ class VideoFeedSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(2.0),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(2.0),
+      decoration: const BoxDecoration(
         color: Color.fromARGB(255, 37, 35, 35),
         boxShadow: [
           BoxShadow(

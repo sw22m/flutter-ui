@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../contants/constants.dart' as Constants;
+import '../contants/constants.dart' as constants;
 
 
 class NavRailExample extends StatefulWidget {
@@ -45,7 +45,7 @@ class _NavRailExampleState extends State<NavRailExample> {
   //   ),
   // ),
               destinations: <NavigationRailDestination>[    
-                  for(Map item in Constants.navItems) NavigationRailDestination(
+                  for(Map item in constants.navItems) NavigationRailDestination(
                     icon: Icon(item['icon']),
                     selectedIcon: Icon(item['icon']),
                     label: Text(item['label']),
