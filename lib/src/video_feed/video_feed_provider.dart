@@ -7,56 +7,46 @@ import 'dart:typed_data';
 
 class VideoFeedProvider with ChangeNotifier {
 
+  late socketio.Socket socket;
   late Timer timer;
   String host = "http://localhost:8080";
   Uint8List imageBytes = Uint8List(0);
   Image image = const Image(image: AssetImage('assets/images/error.png'));
-  bool isConnected = false;
 
   VideoFeedProvider() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    socket = getSocket();
+    checkConnection();
+    timer = Timer.periodic(const Duration(seconds: 1), (timer2) {
+        // print("connected? ${socket.connected}, socket-id: ${socket.id}");
         checkConnection();
-      }
-    );
+    });
   }
 
+  socketio.Socket getSocket() {
+    socketio.Socket s = socketio.io(host, <String, dynamic>{
+      'autoConnect': false,
+      'transports': ['websocket'],
+      },
+    );
+    s.onDisconnect((data) => onDisconnection());
+    // s.onConnect((data) => print("connected"));
+    s.on('video_feed_back', (data) => onVideoFeedBack(data));
+    return s;
+  }
+
+  bool connected() => socket.connected;
+
   void checkConnection() {
-    
-    socketio.Socket socket = socketio.io(host, <String, dynamic>{
-    'autoConnect': false,
-    'transports': ['websocket'],
-    });
-    // TODO
-    // print('VideoFeedProvider: checking connection');
-    // print(socket.connected);
-    // if (socket.connected) {
-    //   return;
-    // }
-    socket.onConnect((_) {
-      print('socket connected');
-      isConnected = true;
-      notifyListeners();
-    });
-    socket.onDisconnect((data) {
-      isConnected = false; 
-      notifyListeners();
-      print('reconnection attempt'); // TODO
-      timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (socket.connected) {
-          print('reconnected'); 
-          isConnected = true;
-          timer.cancel();
-        }
-        socket.connect();
-      });
-    });
-    socket.on('video_feed_back', (data) => onVideoFeedBack(data));
-    socket.on('client_connected', (data) {
-      print('client connected');
-      isConnected = true; 
-      notifyListeners(); 
-    });
+    if (socket.connected) {
+      return;
+    }
     socket.connect();
+    return;
+  }
+
+  void onDisconnection() {
+    // For manual disconnection required by webserver plugin
+    socket.disconnect();
   }
 
   void onVideoFeedBack(data) {
