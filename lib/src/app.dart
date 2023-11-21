@@ -10,6 +10,7 @@ import 'snapshot/snapshot_view.dart';
 import 'snapshot/snapshot_provider.dart';
 import 'package:provider/provider.dart';
 import 'video_feed/video_feed_provider.dart';
+import 'util.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -56,8 +57,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: const [
             Locale('en', ''), // English, no country code
           ],
-          onGenerateTitle: (BuildContext context) =>
-              AppLocalizations.of(context)!.appTitle,
+          title: "Pyuscope",
           // theme: ThemeData(fontFamily: 'NotoSans', appBarTheme: appBarTheme),
           theme: ThemeData(appBarTheme: appBarTheme),
           darkTheme: darkTheme,
@@ -68,16 +68,20 @@ class MyApp extends StatelessWidget {
               builder: (BuildContext context) {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
+                    setPageTitle("Settings", context);
                     return SettingsView(controller: settingsController);
                   case SampleItemDetailsView.routeName:
                     return const SampleItemDetailsView();
                   case SampleItemListView.routeName:
                     return const SampleItemListView();
                   case VideoFeedView.routeName:
+                    setPageTitle("Video Feed", context);
                     return const VideoFeedView();
                   case SnapshotView.routeName:
+                    setPageTitle("Snapshot", context);
                     return const SnapshotView();
                   default:
+                    setPageTitle("Video Feed", context);
                     return const VideoFeedView();
                 }
               },
