@@ -66,34 +66,6 @@ class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
 }
 
 
-// GridView _createPhotoGrid(List<SnapshotThumbnail> snapshots) {
-
-//   return GridView(
-//     scrollDirection: Axis.vertical,           //default
-//     reverse: false,                           //default
-//     controller: ScrollController(),
-//     primary: false,
-//     shrinkWrap: true,
-//     padding: const EdgeInsets.all(5.0),
-//     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//       crossAxisCount: 2,
-//       mainAxisSpacing: 5,
-//       crossAxisSpacing: 5,
-//     ),
-//     addAutomaticKeepAlives: true,             //default
-//     addRepaintBoundaries: true,               //default
-//     addSemanticIndexes: true,                 //default
-//     semanticChildCount: 0,
-//     cacheExtent: 0.0,
-//     dragStartBehavior: DragStartBehavior.start,
-//     clipBehavior: Clip.hardEdge,
-//     keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,      
-//     children: snapshots
-//   );
-
-// }
-
-
 Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots, Image feedImage) {
 
     var deviceSize = MediaQuery.of(context).size;
