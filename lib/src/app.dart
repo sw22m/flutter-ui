@@ -10,6 +10,7 @@ import 'snapshot/snapshot_view.dart';
 import 'snapshot/snapshot_provider.dart';
 import 'package:provider/provider.dart';
 import 'video_feed/video_feed_provider.dart';
+import 'video_feed/axes_controls_widget.dart';
 import 'util.dart';
 
 /// The Widget that configures your application.
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => VideoFeedProvider()),
         ChangeNotifierProvider(create: (_) => SnapshotProvider()),
+        ChangeNotifierProvider(create: (_) => PositionProvider()),
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,

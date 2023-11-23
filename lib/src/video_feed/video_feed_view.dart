@@ -30,14 +30,14 @@ class VideoFeedView extends StatelessWidget {
     return Shortcuts(
       shortcuts: const <ShortcutActivator, Intent>{
         // X-axis
-        SingleActivator(LogicalKeyboardKey.arrowDown): IncrementXIntent(),
+        SingleActivator(LogicalKeyboardKey.keyD): IncrementXIntent(),
         SingleActivator(LogicalKeyboardKey.keyA): DecrementXIntent(),
         // Y-axis
         SingleActivator(LogicalKeyboardKey.keyW): IncrementYIntent(),
         SingleActivator(LogicalKeyboardKey.keyS): DecrementYIntent(),
         // Z-axis
-        SingleActivator(LogicalKeyboardKey.keyQ): IncrementZIntent(),
-        SingleActivator(LogicalKeyboardKey.keyE): DecrementZIntent(),
+        SingleActivator(LogicalKeyboardKey.keyE): IncrementZIntent(),
+        SingleActivator(LogicalKeyboardKey.keyQ): DecrementZIntent(),
       },
       child: Actions(
         actions: <Type, Action<Intent>>{
@@ -55,6 +55,7 @@ class VideoFeedView extends StatelessWidget {
             onInvoke: (DecrementZIntent intent) => positionState.decreaseAxis("z"))
         }, 
         child: Focus(
+          autofocus: true,
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Video Feed'),
