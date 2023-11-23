@@ -8,8 +8,8 @@ class VideoFeedSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(2.0),
-      decoration: const BoxDecoration(
-        color: Color.fromARGB(255, 37, 35, 35),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
         boxShadow: [
           BoxShadow(
             spreadRadius: 1,
@@ -18,15 +18,14 @@ class VideoFeedSidebar extends StatelessWidget {
         ),
       ],
       ),
-      child: const DefaultTabController(
+      child: DefaultTabController(
         length: 2,
         child: Column(
           children: [
             TabBar(
-              indicatorColor: Colors.green,
               tabs: [
                 Tab(icon: Icon(Icons.control_camera_sharp)),
-                Tab(icon: Icon(Icons.lightbulb_rounded)),
+                Tab(icon: Icon(Icons.new_label)),
               ]),
         Expanded(
           child: TabBarView(

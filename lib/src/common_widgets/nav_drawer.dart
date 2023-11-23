@@ -9,19 +9,17 @@ import '../snapshot/snapshot_view.dart';
 ListTile _createDrawerItem(BuildContext context, String text, IconData icon, String routeName, bool selected) {
   return ListTile(
       title: Text(text),
-      hoverColor: Colors.green,
-      selectedColor: selected ? Colors.white: Colors.black,
-      textColor: selected ? Colors.white: Colors.black,
-      iconColor: selected ? Colors.white: Colors.black,
-      tileColor: selected ? Colors.green: Colors.white70,
+      selected: selected,
+      textColor: selected ? Theme.of(context).colorScheme.primary : null,
+      selectedTileColor: selected ? Theme.of(context).colorScheme.primaryContainer : null,
+      iconColor: selected ? Theme.of(context).colorScheme.primary : null,
       leading: Icon(icon),
+      // trailing: selected ? const Icon(Icons.) : null,
       onTap: () {
         Navigator.pushNamed(context, routeName);
-        // setState(() {
-        //   index = 0;
-        // });
       },
-    );}
+     );
+  }
 
 
 class _DrawerTop extends StatefulWidget {
@@ -40,13 +38,12 @@ class _DrawerTopState extends State<_DrawerTop> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
+      // backgroundColor: Theme.of(context).colorScheme.secondary,
       child: ListView(
         // Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: [
           const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.green),
             child: Image(image: AssetImage('assets/images/logo.png')
             ),
           ),
@@ -66,8 +63,6 @@ class NavDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(children: [
       Expanded(flex: 1, child: _DrawerTop()),
-      // Text('pyuscope v0.1'),
-    
     ]);
   }
 }

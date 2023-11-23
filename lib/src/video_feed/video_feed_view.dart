@@ -76,7 +76,7 @@ class VideoFeedView extends StatelessWidget {
                 HorizontalSplitView(left: videoFeedState.image, right: const VideoFeedSidebar(), ratio: 0.8)
               ],
             ),
-            backgroundColor: const Color.fromARGB(255, 59, 59, 59),
+            backgroundColor: Colors.black,
             drawer: const NavDrawer(),
             )
         )

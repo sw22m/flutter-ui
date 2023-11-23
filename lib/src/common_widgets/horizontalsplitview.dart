@@ -54,7 +54,7 @@ class _HorizontalSplitViewState extends State<HorizontalSplitView> {
                 width: _dividerWidth,
                 height: constraints.maxHeight,
                 child: const RotationTransition(
-                  child: Icon(Icons.drag_handle),
+                  child: Icon(Icons.drag_handle_sharp, color: Colors.white),
                   turns: AlwaysStoppedAnimation(0.25),
                 ),
               ),

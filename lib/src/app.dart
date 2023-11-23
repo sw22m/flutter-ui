@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'sample_feature/sample_item_details_view.dart';
 import 'sample_feature/sample_item_list_view.dart';
 import 'video_feed/video_feed_view.dart';
@@ -24,20 +26,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const AppBarTheme appBarTheme = AppBarTheme(
-      toolbarHeight: 48,
-      shadowColor: Colors.black,
-      // color: Color.fromARGB(255, 11, 120, 50),
-      color: Color.fromARGB(255, 247, 247, 247),
-      // color: Color.fromARGB(255, 78, 203, 74),
-      // color: Color.fromARGB(255, 37, 38, 105), # TEV
-      // Note - testing font props
-      // titleTextStyle: TextStyle(fontFamily: 'NotoSans', color: Colors.black, fontWeight: FontWeight.w600),
-      centerTitle: false,
-      foregroundColor: Color.fromARGB(255, 0, 0, 3),
+    FlexScheme myFlexScheme = FlexScheme.tealM3;
+    TextTheme myTextTheme = TextTheme(
+      displayLarge: const TextStyle(
+        fontSize: 32,
+        // fontWeight: FontWeight.bold,
+      ),
+      titleLarge: GoogleFonts.jetBrainsMono(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
+      titleSmall: GoogleFonts.jetBrainsMono(
+        fontSize: 16,
+        fontWeight: FontWeight.w300,
+      ),
+
+      bodyMedium: GoogleFonts.assistant(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      displaySmall: GoogleFonts.pacifico(),
     );
 
-    ThemeData darkTheme = ThemeData.dark(); //(fontFamily: 'FiraSans');
     return ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -60,9 +70,17 @@ class MyApp extends StatelessWidget {
             Locale('en', ''), // English, no country code
           ],
           title: "Pyuscope",
-          // theme: ThemeData(fontFamily: 'NotoSans', appBarTheme: appBarTheme),
-          theme: ThemeData(appBarTheme: appBarTheme),
-          darkTheme: darkTheme,
+          theme: FlexThemeData.light(
+            scheme: myFlexScheme,
+            textTheme: myTextTheme,
+            appBarBackground: const Color.fromARGB(240, 24, 24, 24),
+            appBarOpacity: 0.9,
+          ),
+          darkTheme: FlexThemeData.dark(
+            scheme: myFlexScheme,
+            appBarBackground: const Color.fromARGB(240, 24, 24, 24),
+            textTheme: myTextTheme,
+          ),
           themeMode: settingsController.themeMode,
           onGenerateRoute: (RouteSettings routeSettings) {
             return MaterialPageRoute<void>(

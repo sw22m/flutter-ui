@@ -66,31 +66,78 @@ class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
 }
 
 
-GridView _createPhotoGrid(List<SnapshotThumbnail> snapshots) {
-  return GridView(
-    scrollDirection: Axis.vertical,           //default
-    reverse: false,                           //default
-    controller: ScrollController(),
-    primary: false,
-    shrinkWrap: true,
-    padding: const EdgeInsets.all(5.0),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      mainAxisSpacing: 5.0,
-      crossAxisSpacing: 5.0,
-    ),
-    addAutomaticKeepAlives: true,             //default
-    addRepaintBoundaries: true,               //default
-    addSemanticIndexes: true,                 //default
-    semanticChildCount: 0,
-    cacheExtent: 0.0,
-    dragStartBehavior: DragStartBehavior.start,
-    clipBehavior: Clip.hardEdge,
-    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,      
-    children: snapshots
-  );
-}
+// GridView _createPhotoGrid(List<SnapshotThumbnail> snapshots) {
 
+//   return GridView(
+//     scrollDirection: Axis.vertical,           //default
+//     reverse: false,                           //default
+//     controller: ScrollController(),
+//     primary: false,
+//     shrinkWrap: true,
+//     padding: const EdgeInsets.all(5.0),
+//     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//       crossAxisCount: 2,
+//       mainAxisSpacing: 5,
+//       crossAxisSpacing: 5,
+//     ),
+//     addAutomaticKeepAlives: true,             //default
+//     addRepaintBoundaries: true,               //default
+//     addSemanticIndexes: true,                 //default
+//     semanticChildCount: 0,
+//     cacheExtent: 0.0,
+//     dragStartBehavior: DragStartBehavior.start,
+//     clipBehavior: Clip.hardEdge,
+//     keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,      
+//     children: snapshots
+//   );
+
+// }
+
+
+Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots, Image feedImage) {
+
+    var deviceSize = MediaQuery.of(context).size;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min, 
+      children: [
+        Expanded(
+          flex: 0,
+          child: Container(
+            width: deviceSize.width,
+            child: Stack(
+              alignment: AlignmentDirectional.topCenter,
+              children: [
+                feedImage,
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 5,
+            ),
+            itemCount: snapshots.length,
+            itemBuilder: (BuildContext context, int index) {
+              return snapshots[index];
+              // return Container(
+              //   color: Colors.green,
+              //   child: Center(
+              //     child: CircleAvatar(
+              //       backgroundColor: Colors.white,
+              //       child: Text('$index'),
+              //     ),
+              //   ),
+              // );
+            },
+          ),
+        ),
+    ]);
+}
 
 class SnapshotView extends StatelessWidget {
   const SnapshotView({super.key});
@@ -129,7 +176,8 @@ class SnapshotView extends StatelessWidget {
       ),
       body: Stack(
         children: <Widget>[
-          Container(alignment: Alignment.topLeft,
+          Container(
+            alignment: Alignment.topLeft,
             height: 30,
             child: snapshotState.selectedSnapshot != -1 ? 
               Text(snapshots[snapshotState.selectedSnapshot].name, 
@@ -139,17 +187,16 @@ class SnapshotView extends StatelessWidget {
             left: snapshotState.selectedSnapshot != -1 ? 
               snapshots[snapshotState.selectedSnapshot].image 
               : const Center(child: Text('No Snapshot Selected')), 
-            right: Container(alignment: Alignment.topCenter, 
-              child: Column(children: [
-                videoFeedState.image,
-                _createPhotoGrid(snapshots)
-              ])
+            right: Container(
+              color: Color.fromARGB(240, 24, 24, 24),
+              alignment: Alignment.topCenter, 
+              child: _createPhotoGrid(context, snapshots, videoFeedState.image)
             ), 
             ratio: 0.8),
           // NavRailExample(),
         ],
       ),
-      backgroundColor: const Color.fromARGB(255, 59, 59, 59),
+      backgroundColor: Colors.black,
       drawer: const NavDrawer(),
     );
   }
