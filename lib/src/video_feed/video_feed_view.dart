@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'video_feed_provider.dart';
 import '../snapshot/snapshot_view.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
 
 class IncrementXIntent extends Intent { const IncrementXIntent(); }
 class DecrementXIntent extends Intent { const DecrementXIntent(); }
@@ -17,6 +18,36 @@ class IncrementZIntent extends Intent { const IncrementZIntent(); }
 class DecrementZIntent extends Intent { const DecrementZIntent(); }
 
 
+Widget createVideoFeedWidget(BuildContext context) {
+  final videoFeedState = Provider.of<VideoFeedProvider>(context);
+  return Padding(
+    padding: const EdgeInsets.all(20.0),
+    child: Center(
+      child: 
+        videoFeedState.connected()
+          ? StreamBuilder(
+              stream: videoFeedState.streamSocket.getResponse,
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (!snapshot.hasData) {
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return const Center(
+                    child: Text("Connection Closed !"),
+                  );
+                }
+                return Image.memory(
+                  Uint8List.fromList(base64Decode((snapshot.data.toString()))),
+                  gaplessPlayback: true,
+                );
+              },
+            )
+          : const Text("Initiate Connection")
+      ),
+    );
+  }
+
+
 class VideoFeedView extends StatelessWidget {
   const VideoFeedView({super.key});
 
@@ -24,6 +55,7 @@ class VideoFeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     final videoFeedState = Provider.of<VideoFeedProvider>(context);
     final snapshotState = Provider.of<SnapshotProvider>(context);
     final positionState = Provider.of<PositionProvider>(context);
@@ -63,8 +95,8 @@ class VideoFeedView extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.camera_alt),
                   tooltip: 'Take Snapshot',
-                  onPressed: () {
-                      snapshotState.takeSnapshot(videoFeedState.image);
+                  onPressed: () async {
+                      snapshotState.takeSnapshot(videoFeedState.requestSnapshot());
                       Navigator.pushNamed(context, SnapshotView.routeName);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Snapshot captured')));
@@ -73,7 +105,7 @@ class VideoFeedView extends StatelessWidget {
             ),
             body: Stack(
               children: <Widget>[
-                HorizontalSplitView(left: videoFeedState.image, right: const VideoFeedSidebar(), ratio: 0.8)
+                HorizontalSplitView(left: createVideoFeedWidget(context), right: const VideoFeedSidebar(), ratio: 0.8)
               ],
             ),
             backgroundColor: Colors.black,

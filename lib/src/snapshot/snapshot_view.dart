@@ -5,6 +5,7 @@ import '../common_widgets/nav_drawer.dart';
 import '../common_widgets/horizontalsplitview.dart';
 import 'package:provider/provider.dart';
 import '../video_feed/video_feed_provider.dart';
+import '../video_feed/video_feed_view.dart' as vf;
 
 
 class SnapshotThumbnail extends StatefulWidget {
@@ -66,7 +67,7 @@ class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
 }
 
 
-Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots, Image feedImage) {
+Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots, Widget feedImage) {
 
     var deviceSize = MediaQuery.of(context).size;
 
@@ -96,15 +97,6 @@ Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots,
             itemCount: snapshots.length,
             itemBuilder: (BuildContext context, int index) {
               return snapshots[index];
-              // return Container(
-              //   color: Colors.green,
-              //   child: Center(
-              //     child: CircleAvatar(
-              //       backgroundColor: Colors.white,
-              //       child: Text('$index'),
-              //     ),
-              //   ),
-              // );
             },
           ),
         ),
@@ -139,10 +131,10 @@ class SnapshotView extends StatelessWidget {
               }),
           IconButton(
               icon: const Icon(Icons.camera_alt),
-              onPressed: () {
+              onPressed: () async {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Snapshot captured')));
-                snapshotState.takeSnapshot(videoFeedState.image);
+                snapshotState.takeSnapshot(videoFeedState.requestSnapshot());
               }),
         ],
       ),
@@ -162,7 +154,7 @@ class SnapshotView extends StatelessWidget {
             right: Container(
               color: Color.fromARGB(240, 24, 24, 24),
               alignment: Alignment.topCenter, 
-              child: _createPhotoGrid(context, snapshots, videoFeedState.image)
+              child: _createPhotoGrid(context, snapshots, vf.createVideoFeedWidget(context))
             ), 
             ratio: 0.8),
           // NavRailExample(),

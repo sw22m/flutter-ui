@@ -3,21 +3,35 @@ import 'package:socket_io_client/socket_io_client.dart' as socketio;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:rxdart/rxdart.dart';
+
+class StreamSocket {
+  final _socketResponse = BehaviorSubject<String>();
+
+  void Function(String) get addResponse => _socketResponse.sink.add;
+
+  Stream<String> get getResponse => _socketResponse.stream;
+
+  void dispose() {
+    _socketResponse.close();
+  }
+}
 
 
 class VideoFeedProvider with ChangeNotifier {
 
   late socketio.Socket socket;
+  late StreamSocket streamSocket;
   late Timer timer;
   String host = "http://localhost:8080";
   Uint8List imageBytes = Uint8List(0);
   Image image = const Image(image: AssetImage('assets/images/error.png'));
+  bool requestImage = false;
 
   VideoFeedProvider() {
     socket = getSocket();
     checkConnection();
     timer = Timer.periodic(const Duration(seconds: 1), (timer2) {
-        // print("connected? ${socket.connected}, socket-id: ${socket.id}");
         checkConnection();
     });
   }
@@ -29,7 +43,6 @@ class VideoFeedProvider with ChangeNotifier {
       },
     );
     s.onDisconnect((data) => onDisconnection());
-    // s.onConnect((data) => print("connected"));
     s.on('video_feed_back', (data) => onVideoFeedBack(data));
     return s;
   }
@@ -41,6 +54,7 @@ class VideoFeedProvider with ChangeNotifier {
       return;
     }
     socket.connect();
+    streamSocket = StreamSocket();
     return;
   }
 
@@ -50,9 +64,13 @@ class VideoFeedProvider with ChangeNotifier {
   }
 
   void onVideoFeedBack(data) {
-    imageBytes = base64.decode(data.split(',').last);
-    image = Image.memory(imageBytes, gaplessPlayback: true);
-    notifyListeners();
+    imageBytes = base64.decode(data);
+    streamSocket.addResponse(data);
+  }
+
+  Image requestSnapshot() {
+    // TODO: can be replaced by API request
+    return image = Image.memory(imageBytes);//, gaplessPlayback: true);
   }
 
 }
