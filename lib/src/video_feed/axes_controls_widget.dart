@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../config.dart' show apiHost;
@@ -19,7 +20,7 @@ class PositionProvider with ChangeNotifier {
   }
 
   Future fetchPosition() async {
-      String url = "$apiHost/get/pos";
+      String url = "$apiHost/get/position";
       log.info(url);
       try {
         final response = await http.get(Uri.parse(url));
@@ -32,34 +33,56 @@ class PositionProvider with ChangeNotifier {
           log.info('Failed to fetch position');
         }
       } on Exception {
-        log.info('Failed to fetch position');    
+        log.info('Failed to fetch position');
       }
       notifyListeners();
   }
 
-  // Future setAbsolutePosition() async {
-  //   final response = await http
-  //     .get(Uri.parse(dotenv.get('API_HOST', fallback: "http://localhost:8080") + '/set/pos?x=2&relative=1'));
-  // }
-
   Future setPositionRelative(double dx, double dy, double dz) async {
-    String url = "$apiHost/set/pos?x=$dx&y=$dy&z=$dz&relative=1";
+    String url = "$apiHost/run/move_relative?axis.x=$dx&axis.y=$dy&axis.z=$dz";
     log.info(url);
     try {
       final response = await http
         .get(Uri.parse(url));
       if (response.statusCode == 200) {
-          Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
-          x = json['data']['x'] as double;
-          y = json['data']['y'] as double;
-          z = json['data']['z'] as double;
+          fetchPosition();
         } else {
-          log.info('Failed to set position');
+          log.info('Failed to set relative position');
         }
     } on Exception {
-        log.info('Failed to set position');    
+        log.info('Failed to set relative position');    
     }  
     notifyListeners();
+  }
+
+  Future setPostionAbsolute(String axis, double value) async {
+    String url;
+    switch (axis) {
+      case 'x':
+        url = "$apiHost/run/move_absolute?axis.x=$value";
+        break;
+      case 'y':
+        url = "$apiHost/run/move_absolute?axis.y=$value";
+        break;
+      case 'z':
+        url = "$apiHost/run/move_absolute?axis.z=$value";
+        break;
+      default:
+        return;
+    }
+    log.info(url);
+    try {
+      final response = await http
+        .get(Uri.parse(url));
+      if (response.statusCode == 200) {
+          fetchPosition();
+        } else {
+          log.info('Failed to set absolute position');
+        }
+    } on Exception {
+        log.info('Failed to set absolute position');    
+    }  
+
   }
 
   void decreaseAxis(String axis) {
@@ -139,15 +162,38 @@ class _AxisButtonState extends State<AxisButton> {
 Widget _createAxisControl(BuildContext context, String label, double value, state) {
   Color primary = Theme.of(context).colorScheme.primary;
   Color secondary = Theme.of(context).colorScheme.secondary;
+
+  TextEditingController controller = TextEditingController(text: '$value');
+  TextField input = TextField(controller: controller,
+    readOnly: true,
+    onTap: () {
+      if (FocusScope.of(context).hasFocus) {
+        controller.selection = TextSelection(baseOffset: 0, extentOffset: controller.value.text.length);
+      }
+    },
+    onSubmitted: (value) {
+      try {
+        state.setPostionAbsolute(label, double.parse(value));
+        log.info(value);
+      } on Exception {
+        log.info('invalid float');
+      }
+    },
+    inputFormatters: [
+      FilteringTextInputFormatter.allow(RegExp('[0-9.,]')),
+    ],
+    textAlign: TextAlign.left, style: TextStyle(color: primary));
+    
+
   return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Expanded(flex: 0, child: Text(label, textAlign: TextAlign.end, style: TextStyle(color: primary))),
-        Expanded(flex: 1, child: AxisButton(iconData: Icons.remove_outlined, 
+        Expanded(flex: 0, child: AxisButton(iconData: Icons.remove_outlined, 
               label: label, callback: state.decreaseAxis, color: secondary)),
-        Expanded(flex: 1, child: Text('$value', textAlign: TextAlign.center, style: TextStyle(color: primary))),
-        Expanded(flex: 1, child: AxisButton(iconData: Icons.add_outlined, 
+        Expanded(flex: 1, child: input),
+        Expanded(flex: 0, child: AxisButton(iconData: Icons.add_outlined, 
               label: label, callback: state.increaseAxis, color: primary)),
       ]
     ); 

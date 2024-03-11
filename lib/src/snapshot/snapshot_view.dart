@@ -1,11 +1,10 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
 import '../common_widgets/nav_drawer.dart';
 import '../common_widgets/horizontalsplitview.dart';
+import '../common_widgets/verticalsplitview.dart';
 import 'package:provider/provider.dart';
-import '../video_feed/video_feed_provider.dart';
-import '../video_feed/video_feed_view.dart' as vf;
+import '../video_feed/video_player.dart';
 
 
 class SnapshotThumbnail extends StatefulWidget {
@@ -67,25 +66,10 @@ class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
 }
 
 
-Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots, Widget feedImage) {
-
-    var deviceSize = MediaQuery.of(context).size;
-
+Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots) {
     return Column(
-      mainAxisSize: MainAxisSize.min, 
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Expanded(
-          flex: 0,
-          child: Container(
-            width: deviceSize.width,
-            child: Stack(
-              alignment: AlignmentDirectional.topCenter,
-              children: [
-                feedImage,
-              ],
-            ),
-          ),
-        ),
         Expanded(
           flex: 1,
           child: GridView.builder(
@@ -111,7 +95,6 @@ class SnapshotView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final snapshotState = Provider.of<SnapshotProvider>(context);
-    final videoFeedState = Provider.of<VideoFeedProvider>(context);
     List<SnapshotThumbnail> snapshots = [];
     int n = 0;
     for (var data in snapshotState.snapshotList) {
@@ -134,7 +117,7 @@ class SnapshotView extends StatelessWidget {
               onPressed: () async {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Snapshot captured')));
-                snapshotState.takeSnapshot(videoFeedState.requestSnapshot());
+                snapshotState.takeSnapshot();
               }),
         ],
       ),
@@ -154,7 +137,8 @@ class SnapshotView extends StatelessWidget {
             right: Container(
               color: Color.fromARGB(240, 24, 24, 24),
               alignment: Alignment.topCenter, 
-              child: _createPhotoGrid(context, snapshots, vf.createVideoFeedWidget(context))
+              // child: VerticalSplitView(top: VideoPlayer(), bottom: _createPhotoGrid(context, snapshots))
+              child: _createPhotoGrid(context, snapshots)
             ), 
             ratio: 0.8),
           // NavRailExample(),
@@ -164,5 +148,4 @@ class SnapshotView extends StatelessWidget {
       drawer: const NavDrawer(),
     );
   }
-  
 }

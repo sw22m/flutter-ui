@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import '../video_feed/video_feed_view.dart';
 import '../snapshot/snapshot_view.dart';
+import '../video_feed/video_feed_provider.dart';
+import 'package:provider/provider.dart';
 
 ListTile _createDrawerItem(BuildContext context, String text, IconData icon, String routeName, bool selected) {
+  final videoFeedState = Provider.of<VideoFeedProvider>(context);
   return ListTile(
       title: Text(text),
       selected: selected,
@@ -14,8 +17,8 @@ ListTile _createDrawerItem(BuildContext context, String text, IconData icon, Str
       selectedTileColor: selected ? Theme.of(context).colorScheme.primaryContainer : null,
       iconColor: selected ? Theme.of(context).colorScheme.primary : null,
       leading: Icon(icon),
-      // trailing: selected ? const Icon(Icons.) : null,
       onTap: () {
+        videoFeedState.playing = (routeName == VideoFeedView.routeName);
         Navigator.pushNamed(context, routeName);
       },
      );
@@ -33,10 +36,16 @@ class _DrawerTop extends StatefulWidget {
 
 class _DrawerTopState extends State<_DrawerTop> {
 
-  final int _selectedIndex = 0;
+  // int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final name;
+    if (ModalRoute.of(context) != null) {
+      name = ModalRoute.of(context)?.settings.name;
+    } else {
+      name = null;
+    }
     return Drawer(
       // backgroundColor: Theme.of(context).colorScheme.secondary,
       child: ListView(
@@ -47,9 +56,9 @@ class _DrawerTopState extends State<_DrawerTop> {
             child: Image(image: AssetImage('assets/images/logo.png')
             ),
           ),
-          _createDrawerItem(context, 'Video Feed', Icons.mic_external_on, VideoFeedView.routeName, _selectedIndex == 0),
-          _createDrawerItem(context, 'Snapshot', Icons.camera_alt, SnapshotView.routeName, _selectedIndex == 1),
-          _createDrawerItem(context, 'Settings', Icons.settings_applications, SettingsView.routeName, _selectedIndex == 2)
+          _createDrawerItem(context, 'Video Feed', Icons.mic_external_on, VideoFeedView.routeName, name == VideoFeedView.routeName),
+          _createDrawerItem(context, 'Snapshot', Icons.camera_alt, SnapshotView.routeName, name == SnapshotView.routeName),
+          _createDrawerItem(context, 'Settings', Icons.settings_applications, SettingsView.routeName, name == SettingsView.routeName)
         ],
       ),
     );
