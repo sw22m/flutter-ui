@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'axes_controls_widget.dart';
 import '../common_widgets/nav_drawer.dart';
 import '../common_widgets/horizontalsplitview.dart';
 import 'video_feed_sidebar.dart';
-import 'package:provider/provider.dart';
 import 'video_feed_provider.dart';
 import '../snapshot/snapshot_view.dart';
-import 'package:flutter/services.dart';
 import '../video_feed/video_player.dart';
 
 class IncrementXIntent extends Intent { const IncrementXIntent(); }
@@ -65,26 +65,41 @@ class VideoFeedView extends StatelessWidget {
         child: Focus(
           autofocus: true,
           child: Scaffold(
-            appBar: AppBar(
-              title: const Text('Video Feed'),
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.camera_alt),
-                  tooltip: 'Take Snapshot',
-                  onPressed: () async {
-                      snapshotState.takeSnapshot();
-                      videoFeedState.playing = false;
-                      Navigator.pushNamed(context, SnapshotView.routeName);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Snapshot captured')));
-                  },
-                )],
-            ),
+            // appBar: AppBar(
+            //   title: const Text('Pyuscope'),
+            //   actions: <Widget>[
+            //     IconButton(
+            //       icon: const Icon(Icons.camera_alt),
+            //       tooltip: 'Take Snapshot',
+            //       onPressed: () async {
+            //           snapshotState.takeSnapshot();
+            //           ScaffoldMessenger.of(context).showSnackBar(
+            //             const SnackBar(content: Text('Snapshot captured')));
+            //       },
+            //     )],
+            // ),
             body: Stack(
               children: <Widget>[
-                HorizontalSplitView(left: videoPlayer, right: VideoFeedSidebar(), ratio: 0.8)
-              ],
-            ),
+                DefaultTabController(
+                  length: 2, 
+                  child: Column(
+                    children: [
+                      const TabBar(
+                        tabs: [
+                          Tab(icon: Icon(Icons.mic_external_on), text: "Video Feed"),
+                          Tab(icon: Icon(Icons.grid_view), text: "Snapshots"),
+                      ]),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            HorizontalSplitView(left: videoPlayer,  right: VideoFeedSidebar(), ratio: 0.8),
+                            SnapshotView(),
+                          ]
+                        )
+                      )
+                    ],
+                  )
+            )]),
             backgroundColor: Colors.black,
             drawer: const NavDrawer(),
             )

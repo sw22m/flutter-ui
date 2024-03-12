@@ -57,7 +57,6 @@ class _DrawerTopState extends State<_DrawerTop> {
             ),
           ),
           _createDrawerItem(context, 'Video Feed', Icons.mic_external_on, VideoFeedView.routeName, name == VideoFeedView.routeName),
-          _createDrawerItem(context, 'Snapshot', Icons.camera_alt, SnapshotView.routeName, name == SnapshotView.routeName),
           _createDrawerItem(context, 'Settings', Icons.settings_applications, SettingsView.routeName, name == SettingsView.routeName)
         ],
       ),

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'video_feed/video_feed_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
-import 'snapshot/snapshot_view.dart';
 import 'snapshot/snapshot_provider.dart';
 import 'video_feed/video_feed_provider.dart';
 import 'package:provider/provider.dart';
@@ -27,26 +25,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     
     FlexScheme myFlexScheme = FlexScheme.tealM3;
-    TextTheme myTextTheme = TextTheme(
-      displayLarge: const TextStyle(
-        fontSize: 32,
-      ),
-      titleLarge: GoogleFonts.jetBrainsMono(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-      ),
-      titleSmall: GoogleFonts.jetBrainsMono(
-        fontSize: 16,
-        fontWeight: FontWeight.w300,
-      ),
-
-      bodyMedium: GoogleFonts.assistant(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-      ),
-      displaySmall: GoogleFonts.pacifico(),
-    );
-
     return ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -71,14 +49,14 @@ class MyApp extends StatelessWidget {
           title: "Pyuscope",
           theme: FlexThemeData.light(
             scheme: myFlexScheme,
-            textTheme: myTextTheme,
+            // textTheme: myTextTheme,
             appBarBackground: const Color.fromARGB(240, 24, 24, 24),
             appBarOpacity: 0.9,
           ),
           darkTheme: FlexThemeData.dark(
             scheme: myFlexScheme,
             appBarBackground: const Color.fromARGB(240, 24, 24, 24),
-            textTheme: myTextTheme,
+            // textTheme: myTextTheme,
           ),
           themeMode: settingsController.themeMode,
           onGenerateRoute: (RouteSettings routeSettings) {
@@ -92,9 +70,6 @@ class MyApp extends StatelessWidget {
                   case VideoFeedView.routeName:
                     setPageTitle("Video Feed", context);
                     return const VideoFeedView();
-                  case SnapshotView.routeName:
-                    setPageTitle("Snapshot", context);
-                    return const SnapshotView();
                   default:
                     setPageTitle("Video Feed", context);
                     return const VideoFeedView();

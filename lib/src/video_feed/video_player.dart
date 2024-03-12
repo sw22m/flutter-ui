@@ -1,9 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';                      // Provides [Player], [Media], [Playlist] etc.
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:pyuscope_web/src/video_feed/video_feed_view.dart';
 import '../video_feed/video_feed_provider.dart';
 import 'package:provider/provider.dart';
+import '../snapshot/snapshot_provider.dart';
 
 
 class VideoPlayer extends StatefulWidget {
@@ -28,14 +30,26 @@ class VideoPlayerState extends State<VideoPlayer> {
     player.dispose();
     super.dispose();
   }
+
+  void takeSnapshot(snapshotState) async {
+    final Uint8List? bytes = await player.screenshot();
+    if (bytes != null) {
+      snapshotState.addImageToSnapshots(Image.memory(bytes));
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
     final videoState = Provider.of<VideoFeedProvider>(context);
+    final snapshotState = Provider.of<SnapshotProvider>(context);
     if (videoState.playing) {
       player.play();
     } else {
       player.stop();
+    }
+    if (snapshotState.snapshotRequested) {
+      snapshotState.snapshotRequested = false;
+      takeSnapshot(snapshotState);
     }
     return Center(
         child: SizedBox(

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
-import '../common_widgets/nav_drawer.dart';
 import '../common_widgets/horizontalsplitview.dart';
-import '../common_widgets/verticalsplitview.dart';
 import 'package:provider/provider.dart';
-import '../video_feed/video_player.dart';
 
 
 class SnapshotThumbnail extends StatefulWidget {
@@ -100,28 +97,7 @@ class SnapshotView extends StatelessWidget {
     for (var data in snapshotState.snapshotList) {
       snapshots.add(SnapshotThumbnail(data.name, data.image, n++, snapshotState));
     }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Snapshot'),
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.delete_forever),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Snapshots cleared')));
-                snapshotState.clearSnapshots();
-              }),
-          IconButton(
-              icon: const Icon(Icons.camera_alt),
-              onPressed: () async {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Snapshot captured')));
-                snapshotState.takeSnapshot();
-              }),
-        ],
-      ),
-      body: Stack(
+    return Stack(
         children: <Widget>[
           Container(
             alignment: Alignment.topLeft,
@@ -136,16 +112,12 @@ class SnapshotView extends StatelessWidget {
               : const Center(child: Text('No Snapshot Selected')), 
             right: Container(
               color: Color.fromARGB(240, 24, 24, 24),
-              alignment: Alignment.topCenter, 
-              // child: VerticalSplitView(top: VideoPlayer(), bottom: _createPhotoGrid(context, snapshots))
+              alignment: Alignment.topCenter,
               child: _createPhotoGrid(context, snapshots)
             ), 
             ratio: 0.8),
           // NavRailExample(),
         ],
-      ),
-      backgroundColor: Colors.black,
-      drawer: const NavDrawer(),
-    );
+      );
   }
 }

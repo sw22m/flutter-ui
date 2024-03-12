@@ -17,7 +17,6 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_localizations:
     sdk: flutter
-  google_fonts: ^6.1.0
   http: ^1.1.0
   logging: ^1.2.0
   media_kit: ^1.1.10+1

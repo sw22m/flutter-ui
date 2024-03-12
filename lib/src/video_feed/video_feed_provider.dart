@@ -1,7 +1,7 @@
 // Not ideal, workaround to stop the media player crashing
 
 import 'package:flutter/material.dart';
-import 'package:pyuscope_web/src/video_feed/video_feed_view.dart';
+
 
 class VideoFeedProvider with ChangeNotifier {
 
