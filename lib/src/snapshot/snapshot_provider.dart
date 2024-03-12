@@ -49,10 +49,11 @@ class SnapshotProvider with ChangeNotifier {
           selectedSnapshot = snapshotList.length - 1;
           notifyListeners();
         } else {
-          log.info('Failed to fetch position');
+          log.info('Failed to fetch position $url');
         }
-      } on Exception {
-          log.info('Failed to fetch position');
+      } on Exception catch(e) {
+          log.info('Failed to fetch position $url');
+          // print(e);
       }
   }
 

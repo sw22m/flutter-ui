@@ -6,9 +6,9 @@ String get apiHost {
 
   // TODO
   if (isProd) {
-    const url = String.fromEnvironment("API_HOST", defaultValue: "127.0.0.1:8080");
+    const url = String.fromEnvironment("API_HOST", defaultValue: "http://127.0.0.1:8080");
     return url;
   }
-  const url = String.fromEnvironment("API_HOST", defaultValue: "127.0.0.1:8080");
+  const url = String.fromEnvironment("API_HOST", defaultValue: "http://127.0.0.1:8080");
   return url;
 }
