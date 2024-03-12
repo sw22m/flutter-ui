@@ -1,11 +1,7 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
-import '../common_widgets/nav_drawer.dart';
 import '../common_widgets/horizontalsplitview.dart';
 import 'package:provider/provider.dart';
-import '../video_feed/video_feed_provider.dart';
-import '../video_feed/video_feed_view.dart' as vf;
 
 
 class SnapshotThumbnail extends StatefulWidget {
@@ -67,25 +63,10 @@ class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
 }
 
 
-Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots, Widget feedImage) {
-
-    var deviceSize = MediaQuery.of(context).size;
-
+Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots) {
     return Column(
-      mainAxisSize: MainAxisSize.min, 
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Expanded(
-          flex: 0,
-          child: Container(
-            width: deviceSize.width,
-            child: Stack(
-              alignment: AlignmentDirectional.topCenter,
-              children: [
-                feedImage,
-              ],
-            ),
-          ),
-        ),
         Expanded(
           flex: 1,
           child: GridView.builder(
@@ -111,34 +92,12 @@ class SnapshotView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final snapshotState = Provider.of<SnapshotProvider>(context);
-    final videoFeedState = Provider.of<VideoFeedProvider>(context);
     List<SnapshotThumbnail> snapshots = [];
     int n = 0;
     for (var data in snapshotState.snapshotList) {
       snapshots.add(SnapshotThumbnail(data.name, data.image, n++, snapshotState));
     }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Snapshot'),
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.delete_forever),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Snapshots cleared')));
-                snapshotState.clearSnapshots();
-              }),
-          IconButton(
-              icon: const Icon(Icons.camera_alt),
-              onPressed: () async {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Snapshot captured')));
-                snapshotState.takeSnapshot(videoFeedState.requestSnapshot());
-              }),
-        ],
-      ),
-      body: Stack(
+    return Stack(
         children: <Widget>[
           Container(
             alignment: Alignment.topLeft,
@@ -153,16 +112,12 @@ class SnapshotView extends StatelessWidget {
               : const Center(child: Text('No Snapshot Selected')), 
             right: Container(
               color: Color.fromARGB(240, 24, 24, 24),
-              alignment: Alignment.topCenter, 
-              child: _createPhotoGrid(context, snapshots, vf.createVideoFeedWidget(context))
+              alignment: Alignment.topCenter,
+              child: _createPhotoGrid(context, snapshots)
             ), 
             ratio: 0.8),
           // NavRailExample(),
         ],
-      ),
-      backgroundColor: Colors.black,
-      drawer: const NavDrawer(),
-    );
+      );
   }
-  
 }
