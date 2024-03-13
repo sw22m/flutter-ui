@@ -11,3 +11,7 @@ flutter run
 
 ## Build instructions (for web)
 flutter build web
+
+# Integration with pyuscope
+Replace the 'uscope/script/web' folder in pyuscope project with the 'build/web' from the this
+(flutter) project
