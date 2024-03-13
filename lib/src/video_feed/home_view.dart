@@ -45,10 +45,7 @@ class HomeView extends StatelessWidget {
       child: Actions(
         actions: <Type, Action<Intent>>{
           IncrementXIntent: CallbackAction<IncrementXIntent>(
-            onInvoke: (IncrementXIntent intent) {
-              return positionState.increaseAxis("x");
-            }
-          ),
+            onInvoke: (IncrementXIntent intent) => positionState.increaseAxis("x")),
           DecrementXIntent: CallbackAction<DecrementXIntent>(
             onInvoke: (DecrementXIntent intent) => positionState.decreaseAxis("x")),
           IncrementYIntent: CallbackAction<IncrementYIntent>(

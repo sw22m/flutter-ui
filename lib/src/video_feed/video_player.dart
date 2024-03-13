@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';                      // Provides [Player], [Media], [Playlist] etc.
 import 'package:media_kit_video/media_kit_video.dart';
@@ -37,7 +36,7 @@ class VideoPlayerState extends State<VideoPlayer> {
       snapshotState.addImageToSnapshots(Image.memory(bytes));
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final videoState = Provider.of<VideoFeedProvider>(context);
