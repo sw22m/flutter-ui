@@ -9,16 +9,16 @@ class SnapshotThumbnail extends StatefulWidget {
   final String name;
   final Image image;
   final int index;
-  final state;
+  final dynamic state;
   
-  const SnapshotThumbnail(this.name, this.image, this.index, this.state);
+  const SnapshotThumbnail(this.name, this.image, this.index, this.state, {super.key});
 
   @override
-  _SnapshotThumbnailState createState() => _SnapshotThumbnailState();
+  SnapshotThumbnailState createState() => SnapshotThumbnailState();
 
 }
 
-class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
+class SnapshotThumbnailState extends State<SnapshotThumbnail> {
   Color color = Colors.transparent;
 
   @override
@@ -111,7 +111,7 @@ class SnapshotView extends StatelessWidget {
               snapshots[snapshotState.selectedSnapshot].image 
               : const Center(child: Text('No Snapshot Selected')), 
             right: Container(
-              color: Color.fromARGB(240, 24, 24, 24),
+              color: const Color.fromARGB(240, 24, 24, 24),
               alignment: Alignment.topCenter,
               child: _createPhotoGrid(context, snapshots)
             ), 

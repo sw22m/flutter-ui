@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'axes_controls_widget.dart';
 import '../common_widgets/nav_drawer.dart';
 import '../common_widgets/horizontalsplitview.dart';
 import 'video_feed_sidebar.dart';
-import 'video_feed_provider.dart';
 import '../snapshot/snapshot_view.dart';
 import '../video_feed/video_player.dart';
 
@@ -18,19 +16,19 @@ class IncrementZIntent extends Intent { const IncrementZIntent(); }
 class DecrementZIntent extends Intent { const DecrementZIntent(); }
 
 
-class VideoFeedView extends StatelessWidget {
+class HomeView extends StatelessWidget {
 
-  const VideoFeedView({super.key});
+  const HomeView({super.key});
 
-  static const routeName = '/video_feed';
+  static const routeName = '/index';
 
   @override
   Widget build(BuildContext context) {
 
-    VideoPlayer videoPlayer = VideoPlayer();
-    final snapshotState = Provider.of<SnapshotProvider>(context);
+    VideoPlayer videoPlayer = const VideoPlayer();
+    // final snapshotState = Provider.of<SnapshotProvider>(context);
     final positionState = Provider.of<PositionProvider>(context);
-    final videoFeedState = Provider.of<VideoFeedProvider>(context);
+    // final videoFeedState = Provider.of<VideoFeedProvider>(context);
 
     return Shortcuts(
       shortcuts: const <ShortcutActivator, Intent>{
@@ -92,8 +90,8 @@ class VideoFeedView extends StatelessWidget {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            HorizontalSplitView(left: videoPlayer,  right: VideoFeedSidebar(), ratio: 0.8),
-                            SnapshotView(),
+                            HorizontalSplitView(left: videoPlayer,  right: const VideoFeedSidebar(), ratio: 0.8),
+                            const SnapshotView(),
                           ]
                         )
                       )

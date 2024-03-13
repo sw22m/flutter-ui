@@ -11,10 +11,10 @@ class VerticalSplitView extends StatefulWidget {
         assert(ratio <= 1);
 
   @override
-  _VerticalSplitViewState createState() => _VerticalSplitViewState();
+  VerticalSplitViewState createState() => VerticalSplitViewState();
 }
 
-class _VerticalSplitViewState extends State<VerticalSplitView> {
+class VerticalSplitViewState extends State<VerticalSplitView> {
   final _dividerHeight = 16.0;
 
   //from 0-1
@@ -35,7 +35,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
     return LayoutBuilder(builder: (context, BoxConstraints constraints) {
       assert(_ratio <= 1);
       assert(_ratio >= 0);
-      if (_maxHeight == null) _maxHeight = constraints.maxHeight - _dividerHeight;
+      // if (_maxHeight == null) _maxHeight = constraints.maxHeight - _dividerHeight;
       if (_maxHeight != constraints.maxHeight) {
         _maxHeight = constraints.maxHeight - _dividerHeight;
       }
@@ -58,9 +58,11 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
               onPanUpdate: (DragUpdateDetails details) {
                 setState(() {
                   _ratio += details.delta.dy / _maxHeight;
-                  if (_ratio > 1)
+                  if (_ratio > 1) {
                     _ratio = 1;
-                  else if (_ratio < 0.0) _ratio = 0.0;
+                  } else if (_ratio < 0.0) {
+                    _ratio = 0.0;
+                  }
                 });
               },
             ),

@@ -1,10 +1,9 @@
 /*
-
+This component should be unused at the moment
 */
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
-import '../video_feed/video_feed_view.dart';
-import '../snapshot/snapshot_view.dart';
+import '../video_feed/home_view.dart';
 import '../video_feed/video_feed_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +17,7 @@ ListTile _createDrawerItem(BuildContext context, String text, IconData icon, Str
       iconColor: selected ? Theme.of(context).colorScheme.primary : null,
       leading: Icon(icon),
       onTap: () {
-        videoFeedState.playing = (routeName == VideoFeedView.routeName);
+        videoFeedState.playing = (routeName == HomeView.routeName);
         Navigator.pushNamed(context, routeName);
       },
      );
@@ -40,7 +39,7 @@ class _DrawerTopState extends State<_DrawerTop> {
 
   @override
   Widget build(BuildContext context) {
-    final name;
+    dynamic name;
     if (ModalRoute.of(context) != null) {
       name = ModalRoute.of(context)?.settings.name;
     } else {
@@ -56,7 +55,7 @@ class _DrawerTopState extends State<_DrawerTop> {
             child: Image(image: AssetImage('assets/images/logo.png')
             ),
           ),
-          _createDrawerItem(context, 'Video Feed', Icons.mic_external_on, VideoFeedView.routeName, name == VideoFeedView.routeName),
+          _createDrawerItem(context, 'Video Feed', Icons.mic_external_on, HomeView.routeName, name == HomeView.routeName),
           _createDrawerItem(context, 'Settings', Icons.settings_applications, SettingsView.routeName, name == SettingsView.routeName)
         ],
       ),

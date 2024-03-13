@@ -52,7 +52,7 @@ class SnapshotProvider with ChangeNotifier {
           log.info('Failed to fetch position $url');
         }
       } on Exception catch(e) {
-          log.info('Failed to fetch position $url');
+          log.info('Failed to fetch position $e');
           // print(e);
       }
   }

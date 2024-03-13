@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'video_feed/video_feed_view.dart';
+import 'video_feed/home_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 import 'snapshot/snapshot_provider.dart';
@@ -67,12 +67,12 @@ class MyApp extends StatelessWidget {
                   case SettingsView.routeName:
                     setPageTitle("Settings", context);
                     return SettingsView(controller: settingsController);
-                  case VideoFeedView.routeName:
-                    setPageTitle("Video Feed", context);
-                    return const VideoFeedView();
+                  case HomeView.routeName:
+                    setPageTitle("Home", context);
+                    return const HomeView();
                   default:
                     setPageTitle("Video Feed", context);
-                    return const VideoFeedView();
+                    return const HomeView();
                 }
               },
             );

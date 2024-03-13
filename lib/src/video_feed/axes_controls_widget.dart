@@ -9,6 +9,7 @@ import 'dart:async';
 
 final log = Logger('AxesControl');
 
+
 class PositionProvider with ChangeNotifier {
 
   double x = 0;
@@ -120,8 +121,8 @@ class AxisButton extends StatefulWidget {
 
   final IconData iconData;
   final String label;
-  final callback;
-  final color;
+  final dynamic callback;
+  final Color color;
 
   const AxisButton({super.key, required this.iconData, 
     required this.label, required this.callback, required this.color});
@@ -139,12 +140,12 @@ class _AxisButtonState extends State<AxisButton> {
     return GestureDetector(
       onLongPress: () {
         pressed = true;
-        Timer timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
-          if (pressed == false) {
-            timer.cancel();
-          }
-          widget.callback(widget.label);
-        });
+        // Timer timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+        //   if (pressed == false) {
+        //     timer.cancel();
+        //   }
+        //   widget.callback(widget.label);
+        // });
       },
       onLongPressUp: () {
         pressed = false;

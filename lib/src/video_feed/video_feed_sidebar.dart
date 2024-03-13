@@ -14,7 +14,7 @@ class VideoFeedSidebar extends StatelessWidget {
         padding: const EdgeInsets.all(2.0),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               spreadRadius: 1,
               blurRadius: 1,
