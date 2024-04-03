@@ -7,3 +7,6 @@ In project root:
 flutter clean
 flutter pub get
 flutter run
+
+# Build (web)
+flutter build web

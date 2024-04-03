@@ -35,18 +35,6 @@ class VideoFeedSidebar extends StatelessWidget {
                       Expanded(
                           flex: 0,
                           child: IconButton(
-                            icon: const Icon(Icons.camera_alt),
-                            tooltip: 'Take Snapshot (Direct from player)',
-                            onPressed: () async {
-                              snapshotState.takeSnapshot();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Snapshot captured')));
-                            },
-                          )),
-                      Expanded(
-                          flex: 0,
-                          child: IconButton(
                             icon: const Icon(Icons.camera_enhance),
                             tooltip: 'Take Snapshot 2 (GET Image Request)',
                             onPressed: () async {
