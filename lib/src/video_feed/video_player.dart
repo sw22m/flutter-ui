@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../video_feed/video_feed_provider.dart';
 import 'package:provider/provider.dart';
 import '../snapshot/snapshot_provider.dart';
+import 'package:web_socket_channel/status.dart' as status;
 
 
 class VideoPlayer extends StatefulWidget {
@@ -17,6 +20,7 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class VideoPlayerState extends State<VideoPlayer> {
+  final String url = "wss://127.0.0.1:8443";
   final RTCVideoRenderer localVideo = RTCVideoRenderer();
   final RTCVideoRenderer remoteVideo = RTCVideoRenderer();
   late final MediaStream localStream;
@@ -28,17 +32,18 @@ class VideoPlayerState extends State<VideoPlayer> {
   // Connecting with websocket Server
   void connectToServer() {
     try {
-      const String url = "ws://127.0.0.1:8080";
       channel = WebSocketChannel.connect(Uri.parse(url));
-      channel.sink.add("HELLO 100");
+      var peerId = Random().nextInt(10000) + 10; // Value is >= 0 and < 10.
+      print("saying hello $peerId");
+      channel.sink.add("HELLO $peerId");
       // Listening to the socket event as a stream
       channel.stream.listen(
         (message) async {
           if (message == "HELLO") {
             print('Registered with server. Waiting for call');
-            const String url2 = "ws://127.0.0.1:8080/webrtc";
+            const String url2 = "wss://127.0.0.1:8443/webrtc";
             channel2 = WebSocketChannel.connect(Uri.parse(url2));
-            channel2.sink.add("HEY");
+            channel2.sink.add("$peerId");
             return;
           }
           // Decoding message
@@ -48,13 +53,13 @@ class VideoPlayerState extends State<VideoPlayer> {
             if (decoded["sdp"]["type"] != "offer") {
               return;
             }
-            print("Got SDP offer");
+            // print("Got SDP offer");
             // Set the offer SDP to remote description
             await peerConnection?.setRemoteDescription(
               RTCSessionDescription(decoded["sdp"]["sdp"], decoded["sdp"]["type"]),
             );
             // Create an answer
-            print("Got local stream, creating answer");
+            // print("Got local stream, creating answer");
             RTCSessionDescription answer = await peerConnection!.createAnswer();
             // Set the answer as an local description
             await peerConnection!.setLocalDescription(answer);
@@ -78,13 +83,20 @@ class VideoPlayerState extends State<VideoPlayer> {
           }
           // If no condition fulfilled? printout the message
           else {
-            print(decoded);
+            print("Errored - $decoded");
           }
+        },
+        onError: (error) {
+          _startConnection();
+        },
+        onDone: () {
+          _startConnection();
         },
       );
       
     } catch (e) {
-      throw "ERROR $e";
+      _disconnectFromWebSocket();
+      // throw "ERROR $e";
     }
   }
 
@@ -111,8 +123,7 @@ class VideoPlayerState extends State<VideoPlayer> {
   void initialization() async {
     // Getting video feed from the user camera
     // Disabled sending video
-    localStream = await navigator.mediaDevices
-        .getUserMedia({'video': false, 'audio': false});
+    localStream = await navigator.mediaDevices.getUserMedia({'video': false, 'audio': false});
 
     // Set the local video to display
     localVideo.srcObject = localStream;
@@ -144,7 +155,7 @@ class VideoPlayerState extends State<VideoPlayer> {
 
     // Setting own SDP as local description
     await peerConnection?.setLocalDescription(offer);
-    print(offer);
+    // print(offer);
     // Sending the offer
     channel.sink.add(
       jsonEncode(
@@ -187,19 +198,29 @@ class VideoPlayerState extends State<VideoPlayer> {
 
   @override
   void initState() {
-    connectToServer();
-    localVideo.initialize();
-    remoteVideo.initialize();
-    initialization();
+    _startConnection();
     super.initState();
   }
 
   @override
   void dispose() {
-    peerConnection?.close();
+    _disconnectFromWebSocket();
     localVideo.dispose();
     remoteVideo.dispose();
     super.dispose();
+  }
+
+  void _startConnection() {
+    connectToServer();
+    localVideo.initialize();
+    remoteVideo.initialize();
+    initialization(); 
+  }
+
+  void _disconnectFromWebSocket() {
+    peerConnection?.close();
+    channel.sink.close(status.goingAway);
+    channel2.sink.close(status.goingAway);
   }
 
   @override
