@@ -23,13 +23,14 @@ class SnapshotProvider with ChangeNotifier {
   set selectedSnapshot (int index) {
     if (index >= snapshotList.length) {
       index = -1;
+    } else if (index == _selectedSnapshot) {
+      index = -1;
     }
     _selectedSnapshot = index;
     notifyListeners();
   }
 
   bool snapshotRequested = false;
-  
   bool get showSnapshot => _selectedSnapshot != -1; 
 
   Future fetchImage() async {
@@ -46,12 +47,12 @@ class SnapshotProvider with ChangeNotifier {
             image: image,
             createdOn: now);
           snapshotList.add(snapshot);
-          selectedSnapshot = snapshotList.length - 1;
+          // selectedSnapshot = snapshotList.length - 1;
           notifyListeners();
         } else {
           log.info('Failed to fetch position $url');
         }
-      } on Exception catch(e) {
+      } on Exception {
           log.info('Failed to fetch position $url');
           // print(e);
       }
@@ -63,11 +64,6 @@ class SnapshotProvider with ChangeNotifier {
   }
 
   void takeSnapshot() {
-    snapshotRequested = true;
-    notifyListeners();
-  }
-
-  void takeSnapshot2() {
     fetchImage();
   }
 
@@ -95,6 +91,13 @@ class SnapshotProvider with ChangeNotifier {
         return const Image(image: AssetImage("assets/images/error.png"));
       }
       return snapshotList[_selectedSnapshot].image;
+    }
+
+    String getSelectedSnapshotName() {
+      if (_selectedSnapshot == -1) {
+        return "No snapshot";
+      }
+      return snapshotList[_selectedSnapshot].name;
     }
 
 }

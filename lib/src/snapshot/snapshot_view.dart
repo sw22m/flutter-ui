@@ -3,19 +3,17 @@ import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
 import '../common_widgets/horizontalsplitview.dart';
 import 'package:provider/provider.dart';
 
-
 class SnapshotThumbnail extends StatefulWidget {
-
   final String name;
   final Image image;
   final int index;
   final state;
-  
-  const SnapshotThumbnail(this.name, this.image, this.index, this.state);
+
+  const SnapshotThumbnail(this.name, this.image, this.index, this.state,
+      {super.key});
 
   @override
   _SnapshotThumbnailState createState() => _SnapshotThumbnailState();
-
 }
 
 class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
@@ -45,43 +43,44 @@ class _SnapshotThumbnailState extends State<SnapshotThumbnail> {
           children: [
             widget.image,
             Text(
-                  "(${widget.index}) ${widget.name}",
-                  style: const TextStyle(
-                      color: Colors.white,
-                      backgroundColor: Colors.black,
-                      fontStyle: FontStyle.italic
-                  ),
+              "(${widget.index}) ${widget.name}",
+              style: const TextStyle(
+                  color: Colors.white,
+                  backgroundColor: Colors.black,
+                  fontStyle: FontStyle.italic),
             ),
             AnimatedContainer(
-                color: color,
-                duration: const Duration(milliseconds: 50),
+              color: color,
+              duration: const Duration(milliseconds: 50),
             )
           ],
-        )
-    );
+        ));
   }
 }
 
-
-Column _createPhotoGrid(BuildContext context, List<SnapshotThumbnail> snapshots) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          flex: 1,
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
-            ),
-            itemCount: snapshots.length,
-            itemBuilder: (BuildContext context, int index) {
-              return snapshots[index];
-            },
-          ),
+Column _createPhotoGrid(
+    BuildContext context, List<SnapshotThumbnail> snapshots, int selected) {
+  return Column(mainAxisSize: MainAxisSize.min, children: [
+    Expanded(
+      flex: 1,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 5,
+          crossAxisSpacing: 5,
         ),
-    ]);
+        itemCount: snapshots.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+              // Check if the index is equal to the selected Card integer
+              color: selected == index ? Colors.blue : Colors.black,
+              child: snapshots[index]
+          );
+          // return snapshots[index];
+        },
+      ),
+    ),
+  ]);
 }
 
 class SnapshotView extends StatelessWidget {
@@ -95,29 +94,51 @@ class SnapshotView extends StatelessWidget {
     List<SnapshotThumbnail> snapshots = [];
     int n = 0;
     for (var data in snapshotState.snapshotList) {
-      snapshots.add(SnapshotThumbnail(data.name, data.image, n++, snapshotState));
+      snapshots
+          .add(SnapshotThumbnail(data.name, data.image, n++, snapshotState));
     }
-    return Stack(
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          Container(
-            alignment: Alignment.topLeft,
-            height: 30,
-            child: snapshotState.selectedSnapshot != -1 ? 
-              Text(snapshots[snapshotState.selectedSnapshot].name, 
-              style: const TextStyle(color: Colors.white, backgroundColor: Colors.black))
-              : const Center()),
-          HorizontalSplitView(
-            left: snapshotState.selectedSnapshot != -1 ? 
-              snapshots[snapshotState.selectedSnapshot].image 
-              : const Center(child: Text('No Snapshot Selected')), 
-            right: Container(
-              color: Color.fromARGB(240, 24, 24, 24),
-              alignment: Alignment.topCenter,
-              child: _createPhotoGrid(context, snapshots)
-            ), 
-            ratio: 0.8),
-          // NavRailExample(),
-        ],
-      );
+          Expanded(
+              flex: 0,
+              child: IconButton(
+                iconSize: 32,
+                icon: const Icon(Icons.camera_enhance),
+                tooltip: 'Snapshot',
+                onPressed: () async {
+                  snapshotState.takeSnapshot();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: const Text('Snapshot captured'), 
+                        backgroundColor: Colors.grey.shade400,
+                        duration: const Duration(milliseconds: 40))
+                        );
+                },
+              )),
+          Expanded(
+            flex: 1,
+            child: Container(
+                color: const Color.fromARGB(240, 24, 24, 24),
+                alignment: Alignment.topCenter,
+                child: _createPhotoGrid(context, snapshots, snapshotState.selectedSnapshot)),
+          ),
+          Expanded(
+              flex: 0,
+              child: IconButton(
+                iconSize: 32,
+                color: Colors.black38,
+                icon: const Icon(Icons.delete),
+                tooltip: 'Snapshot',
+                onPressed: () async {
+                  snapshotState.clearSnapshots();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: const Text('Snapshots cleared'),
+                      backgroundColor: Colors.grey.shade400,
+                      duration: const Duration(milliseconds: 40),
+                      ));
+                },
+              )),
+        ]);
   }
 }

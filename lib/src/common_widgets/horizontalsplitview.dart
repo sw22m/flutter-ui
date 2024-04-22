@@ -15,7 +15,7 @@ class HorizontalSplitView extends StatefulWidget {
 }
 
 class _HorizontalSplitViewState extends State<HorizontalSplitView> {
-  final _dividerWidth = 16.0;
+  final _dividerWidth = 12.0;
 
   //from 0-1
   double _ratio = 0.5;
@@ -35,7 +35,7 @@ class _HorizontalSplitViewState extends State<HorizontalSplitView> {
     return LayoutBuilder(builder: (context, BoxConstraints constraints) {
       assert(_ratio <= 1);
       assert(_ratio >= 0);
-      if (_maxWidth == null) _maxWidth = constraints.maxWidth - _dividerWidth;
+      // _maxWidth ??= constraints.maxWidth - _dividerWidth;
       if (_maxWidth != constraints.maxWidth) {
         _maxWidth = constraints.maxWidth - _dividerWidth;
       }
@@ -54,16 +54,16 @@ class _HorizontalSplitViewState extends State<HorizontalSplitView> {
                 width: _dividerWidth,
                 height: constraints.maxHeight,
                 child: const RotationTransition(
-                  child: Icon(Icons.drag_handle_sharp, color: Colors.white),
                   turns: AlwaysStoppedAnimation(0.25),
+                  child: Icon(Icons.drag_handle_sharp, color: Colors.white),
                 ),
               ),
               onPanUpdate: (DragUpdateDetails details) {
                 setState(() {
                   _ratio += details.delta.dx / _maxWidth;
-                  if (_ratio > 1)
+                  if (_ratio > 1) {
                     _ratio = 1;
-                  else if (_ratio < 0.0) _ratio = 0.0;
+                  } else if (_ratio < 0.0) _ratio = 0.0;
                 });
               },
             ),

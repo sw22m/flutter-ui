@@ -6,8 +6,6 @@ import 'axes_controls_widget.dart';
 import '../common_widgets/nav_drawer.dart';
 import '../common_widgets/horizontalsplitview.dart';
 import 'video_feed_sidebar.dart';
-import 'video_feed_provider.dart';
-import '../snapshot/snapshot_view.dart';
 import '../video_feed/video_player.dart';
 
 class IncrementXIntent extends Intent { const IncrementXIntent(); }
@@ -27,10 +25,9 @@ class VideoFeedView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    VideoPlayer videoPlayer = VideoPlayer();
+    VideoPlayer videoPlayer = const VideoPlayer();
     final snapshotState = Provider.of<SnapshotProvider>(context);
     final positionState = Provider.of<PositionProvider>(context);
-    final videoFeedState = Provider.of<VideoFeedProvider>(context);
 
     return Shortcuts(
       shortcuts: const <ShortcutActivator, Intent>{
@@ -47,10 +44,7 @@ class VideoFeedView extends StatelessWidget {
       child: Actions(
         actions: <Type, Action<Intent>>{
           IncrementXIntent: CallbackAction<IncrementXIntent>(
-            onInvoke: (IncrementXIntent intent) {
-              return positionState.increaseAxis("x");
-            }
-          ),
+            onInvoke: (IncrementXIntent intent) => positionState.increaseAxis("x")),
           DecrementXIntent: CallbackAction<DecrementXIntent>(
             onInvoke: (DecrementXIntent intent) => positionState.decreaseAxis("x")),
           IncrementYIntent: CallbackAction<IncrementYIntent>(
@@ -65,41 +59,17 @@ class VideoFeedView extends StatelessWidget {
         child: Focus(
           autofocus: true,
           child: Scaffold(
-            // appBar: AppBar(
-            //   title: const Text('Pyuscope'),
-            //   actions: <Widget>[
-            //     IconButton(
-            //       icon: const Icon(Icons.camera_alt),
-            //       tooltip: 'Take Snapshot',
-            //       onPressed: () async {
-            //           snapshotState.takeSnapshot();
-            //           ScaffoldMessenger.of(context).showSnackBar(
-            //             const SnackBar(content: Text('Snapshot captured')));
-            //       },
-            //     )],
-            // ),
             body: Stack(
               children: <Widget>[
-                DefaultTabController(
-                  length: 2, 
-                  child: Column(
-                    children: [
-                      const TabBar(
-                        tabs: [
-                          Tab(icon: Icon(Icons.mic_external_on), text: "Video Feed"),
-                          Tab(icon: Icon(Icons.grid_view), text: "Snapshots"),
-                      ]),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            HorizontalSplitView(left: videoPlayer,  right: VideoFeedSidebar(), ratio: 0.8),
-                            SnapshotView(),
-                          ]
-                        )
-                      )
-                    ],
-                  )
-            )]),
+                snapshotState.selectedSnapshot == -1 ?
+                const Text("Live feed"): Text(snapshotState.getSelectedSnapshotName()),
+                HorizontalSplitView(
+                  left: snapshotState.selectedSnapshot == -1 
+                    ? videoPlayer: FittedBox(fit: BoxFit.contain, child: snapshotState.getSelectedSnapshotImage()),
+                  // left: videoPlayer,
+                  right: const VideoFeedSidebar(), ratio: 0.8),
+              ]
+            ),
             backgroundColor: Colors.black,
             drawer: const NavDrawer(),
             )

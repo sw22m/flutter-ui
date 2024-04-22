@@ -35,7 +35,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
     return LayoutBuilder(builder: (context, BoxConstraints constraints) {
       assert(_ratio <= 1);
       assert(_ratio >= 0);
-      if (_maxHeight == null) _maxHeight = constraints.maxHeight - _dividerHeight;
+      // _maxHeight ??= constraints.maxHeight - _dividerHeight;
       if (_maxHeight != constraints.maxHeight) {
         _maxHeight = constraints.maxHeight - _dividerHeight;
       }
@@ -58,9 +58,9 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
               onPanUpdate: (DragUpdateDetails details) {
                 setState(() {
                   _ratio += details.delta.dy / _maxHeight;
-                  if (_ratio > 1)
+                  if (_ratio > 1) {
                     _ratio = 1;
-                  else if (_ratio < 0.0) _ratio = 0.0;
+                  } else if (_ratio < 0.0) _ratio = 0.0;
                 });
               },
             ),

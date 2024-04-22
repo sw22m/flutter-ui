@@ -4,7 +4,6 @@
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import '../video_feed/video_feed_view.dart';
-import '../snapshot/snapshot_view.dart';
 import '../video_feed/video_feed_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -40,7 +39,7 @@ class _DrawerTopState extends State<_DrawerTop> {
 
   @override
   Widget build(BuildContext context) {
-    final name;
+    final String? name;
     if (ModalRoute.of(context) != null) {
       name = ModalRoute.of(context)?.settings.name;
     } else {

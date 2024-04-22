@@ -1,15 +1,12 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
-import 'dart:typed_data';
-import 'package:flutter/material.dart';                    
-import '../video_feed/video_feed_provider.dart';
-import 'package:provider/provider.dart';
-import '../snapshot/snapshot_provider.dart';
-import 'package:web_socket_channel/status.dart' as status;
+// import '../video_feed/video_feed_provider.dart';
+// import 'package:provider/provider.dart';
+// import '../snapshot/snapshot_provider.dart';
+// import 'package:web_socket_channel/status.dart' as status;
 
 
 class VideoPlayer extends StatefulWidget {
@@ -20,28 +17,27 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class VideoPlayerState extends State<VideoPlayer> {
-  final String url = "wss://127.0.0.1:8443";
-  final RTCVideoRenderer localVideo = RTCVideoRenderer();
+
+  String status = "Help";
+  static const String serverUrl = "wss://127.0.0.1:8443";
   final RTCVideoRenderer remoteVideo = RTCVideoRenderer();
-  late final MediaStream localStream;
   late final WebSocketChannel channel;
   late final WebSocketChannel channel2;
   MediaStream? remoteStream;
   RTCPeerConnection? peerConnection;
+  var peerId = Random().nextInt(10000) + 10; 
 
   // Connecting with websocket Server
   void connectToServer() {
     try {
-      channel = WebSocketChannel.connect(Uri.parse(url));
-      var peerId = Random().nextInt(10000) + 10; // Value is >= 0 and < 10.
-      print("saying hello $peerId");
+      channel = WebSocketChannel.connect(Uri.parse(serverUrl));
       channel.sink.add("HELLO $peerId");
       // Listening to the socket event as a stream
       channel.stream.listen(
         (message) async {
           if (message == "HELLO") {
             print('Registered with server. Waiting for call');
-            const String url2 = "wss://127.0.0.1:8443/webrtc";
+            String url2 = "$serverUrl/webrtc";
             channel2 = WebSocketChannel.connect(Uri.parse(url2));
             channel2.sink.add("$peerId");
             return;
@@ -70,11 +66,11 @@ class VideoPlayerState extends State<VideoPlayer> {
           // If client receive an Ice candidate from the peer
           else if (decoded.containsKey("ice")) {
             // It add to the RTC peer connection
-            peerConnection?.addCandidate(RTCIceCandidate(
-                decoded["ice"]["candidate"],
-                "0",
-                // decoded["ice"]["sdpMid"],
-                decoded["ice"]["sdpMLineIndex"]));
+          //   peerConnection?.addCandidate(RTCIceCandidate(
+          //       decoded["ice"]["candidate"],
+          //       "0",
+          //       // decoded["ice"]["sdpMid"],
+          //       decoded["ice"]["sdpMLineIndex"]));
           }
           // If Client recive an reply of their offer as answer
           else if (decoded["event"] == "answer") {
@@ -102,13 +98,13 @@ class VideoPlayerState extends State<VideoPlayer> {
 
   // STUN server configuration
   Map<String, dynamic> configuration = {
-    'iceServers': [
-      {
-        'urls': [
-          'stun:stun1.l.google.com:19302',
-        ]
-      }
-    ]
+    // 'iceServers': [
+    //   {
+    //     'urls': [
+    //       'stun:stun1.l.google.com:19302',
+    //     ]
+    //   }
+    // ]
   };
   
   Map<String, dynamic> mediaConstraints = {
@@ -123,14 +119,16 @@ class VideoPlayerState extends State<VideoPlayer> {
   void initialization() async {
     // Getting video feed from the user camera
     // Disabled sending video
-    localStream = await navigator.mediaDevices.getUserMedia({'video': false, 'audio': false});
+    // localStream = await navigator.mediaDevices.getUserMedia({'video': false, 'audio': false});
 
-    // Set the local video to display
-    localVideo.srcObject = localStream;
+    // setState(() {
+    //   // Set the local video to display
+    //   localVideo.srcObject = localStream;
+    // });
     // Initializing the peer connecion
     peerConnection = await createPeerConnection(configuration, mediaConstraints);
     registerPeerConnectionListeners();
-    setState(() {});
+    
     // Adding the local media to peer connection
     // When connection establish, it send to the remote peer
     // localStream.getTracks().forEach((track) {
@@ -180,7 +178,7 @@ class VideoPlayerState extends State<VideoPlayer> {
     };
 
     peerConnection?.onSignalingState = (RTCSignalingState state) {
-      print('Signaling state change: $state');
+      // print('Signaling state change: $state');
     };
 
     peerConnection?.onTrack = ((tracks) {
@@ -205,32 +203,36 @@ class VideoPlayerState extends State<VideoPlayer> {
   @override
   void dispose() {
     _disconnectFromWebSocket();
-    localVideo.dispose();
+    // localVideo.dispose();
     remoteVideo.dispose();
     super.dispose();
   }
 
   void _startConnection() {
     connectToServer();
-    localVideo.initialize();
     remoteVideo.initialize();
     initialization(); 
   }
 
   void _disconnectFromWebSocket() {
     peerConnection?.close();
-    channel.sink.close(status.goingAway);
-    channel2.sink.close(status.goingAway);
+    // See close codes. Accepts 1000, 3000-4000
+    channel.sink.close(1000);
+    channel2.sink.close(1000);
+  }
+
+  String getStatus() {
+    return "";
   }
 
   @override
   Widget build(BuildContext context) {
-    final videoState = Provider.of<VideoFeedProvider>(context);
-    final snapshotState = Provider.of<SnapshotProvider>(context);
-    if (snapshotState.snapshotRequested) {
-      snapshotState.snapshotRequested = false;
-      takeSnapshot(snapshotState);
-      }
+    // final videoState = Provider.of<VideoFeedProvider>(context);
+    // final snapshotState = Provider.of<SnapshotProvider>(context);
+    // if (snapshotState.snapshotRequested) {
+    //   snapshotState.snapshotRequested = false;
+    //   takeSnapshot(snapshotState);
+    //   }
       return Center(
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
@@ -242,61 +244,4 @@ class VideoPlayerState extends State<VideoPlayer> {
           ),
       );
     }
-
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text("Flutter webrtc websocket"),
-    //   ),
-    //   body: Stack(
-    //     children: [
-    //       SizedBox(
-    //         height: MediaQuery.of(context).size.height,
-    //         width: MediaQuery.of(context).size.width,
-    //         child: RTCVideoView(
-    //           remoteVideo,
-    //           mirror: false,
-    //         ),
-    //       ),
-    //       Positioned(
-    //         left: 10,
-    //         child: SizedBox(
-    //           height: 200,
-    //           width: 200,
-    //           child: RTCVideoView(
-    //             localVideo,
-    //             mirror: false,
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    //   floatingActionButton: Row(
-    //     mainAxisSize: MainAxisSize.min,
-    //     children: [
-    //       FloatingActionButton(
-    //         backgroundColor: Colors.amberAccent,
-    //         onPressed: () => registerPeerConnectionListeners(),
-    //         child: const Icon(Icons.settings_applications_rounded),
-    //       ),
-    //       const SizedBox(width: 10),
-    //       FloatingActionButton(
-    //         backgroundColor: Colors.green,
-    //         onPressed: () => {makeCall()},
-    //         child: const Icon(Icons.call_outlined),
-    //       ),
-    //       const SizedBox(width: 10),
-    //       FloatingActionButton(
-    //         backgroundColor: Colors.redAccent,
-    //         onPressed: () {
-    //           channel.sink.add("HELLO 100");
-    //         },
-    //         child: const Icon(
-    //           Icons.call_end_outlined,
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    //   floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    // );
-  // }
 }

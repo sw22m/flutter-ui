@@ -24,7 +24,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    FlexScheme myFlexScheme = FlexScheme.tealM3;
+    final FlexSchemeColor schemeLight = FlexSchemeColor.from(
+      primary: const Color.fromARGB(255, 255, 255, 255),
+      secondary: const Color.fromARGB(255, 42, 161, 61),
+      brightness: Brightness.light,
+    );
+    final FlexSchemeColor schemeDark = FlexSchemeColor.from(
+      primary: const Color.fromARGB(255, 0, 0, 0),
+      secondary: const Color.fromARGB(255, 42, 161, 61),
+      brightness: Brightness.dark,
+    );
+
     return ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -48,13 +58,14 @@ class MyApp extends StatelessWidget {
           ],
           title: "Pyuscope",
           theme: FlexThemeData.light(
-            scheme: myFlexScheme,
+            colors: schemeLight,
             // textTheme: myTextTheme,
             appBarBackground: const Color.fromARGB(240, 24, 24, 24),
             appBarOpacity: 0.9,
           ),
           darkTheme: FlexThemeData.dark(
-            scheme: myFlexScheme,
+            colors: schemeDark,
+            swapColors: true,
             appBarBackground: const Color.fromARGB(240, 24, 24, 24),
             // textTheme: myTextTheme,
           ),
