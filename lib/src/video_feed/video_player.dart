@@ -8,7 +8,6 @@ import 'dart:convert';
 // import '../snapshot/snapshot_provider.dart';
 // import 'package:web_socket_channel/status.dart' as status;
 
-
 class VideoPlayer extends StatefulWidget {
   const VideoPlayer({Key? key}) : super(key: key);
 

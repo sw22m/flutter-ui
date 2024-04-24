@@ -14,6 +14,7 @@ class PositionProvider with ChangeNotifier {
   double x = 0;
   double y = 0;
   double z = 0;
+  bool jogging = false;
 
   PositionProvider() {
     fetchPosition();
@@ -113,6 +114,11 @@ class PositionProvider with ChangeNotifier {
         break;
       default:
     }
+  }
+
+  void toggleJogging() {
+    jogging = !jogging;
+    notifyListeners();
   }
 }
 

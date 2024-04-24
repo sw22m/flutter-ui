@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:pyuscope_web/src/snapshot/snapshot_provider.dart';
 import 'axes_controls_widget.dart';
 import '../common_widgets/nav_drawer.dart';
 import '../common_widgets/horizontalsplitview.dart';
@@ -55,7 +55,7 @@ class VideoFeedView extends StatelessWidget {
             onInvoke: (IncrementZIntent intent) => positionState.increaseAxis("z")),
           DecrementZIntent: CallbackAction<DecrementZIntent>(
             onInvoke: (DecrementZIntent intent) => positionState.decreaseAxis("z"))
-        }, 
+        },
         child: Focus(
           autofocus: true,
           child: Scaffold(
@@ -66,7 +66,6 @@ class VideoFeedView extends StatelessWidget {
                 HorizontalSplitView(
                   left: snapshotState.selectedSnapshot == -1 
                     ? videoPlayer: FittedBox(fit: BoxFit.contain, child: snapshotState.getSelectedSnapshotImage()),
-                  // left: videoPlayer,
                   right: const VideoFeedSidebar(), ratio: 0.8),
               ]
             ),
