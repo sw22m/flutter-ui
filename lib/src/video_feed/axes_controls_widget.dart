@@ -119,6 +119,28 @@ class PositionProvider with ChangeNotifier {
   void toggleJogging() {
     jogging = !jogging;
     notifyListeners();
+
+    if (jogging) {
+      ServicesBinding.instance.keyboard.addHandler(_onKey);
+    } else {
+      ServicesBinding.instance.keyboard.removeHandler(_onKey);
+    }
+  }
+
+  bool _onKey(KeyEvent event) {
+    final key = event.logicalKey.keyLabel;
+
+    if (event is KeyDownEvent) {
+      if (key == "W") {
+        print("Key down: $key");
+        increaseAxis('x');
+      }
+    } else if (event is KeyUpEvent) {
+      print("Key up: $key");
+    } else if (event is KeyRepeatEvent) {
+      print("Key repeat: $key");
+    }
+    return false;
   }
 }
 
